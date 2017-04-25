@@ -113,7 +113,7 @@ public class Login extends JFrame{
 				 String n1 = num1.getText();
 				 if (ev.getSource() == button1) {
 
-		                if ( n.equals("login") && n1.equals("password")) {
+		                if ( n.equals("log") && n1.equals("pas")) {
 		                	Frame window = new Frame();
 		                	frame.setVisible(false);
 		                } else {

@@ -167,7 +167,8 @@ public class Frame1 {
          panel.add(comboBox,BorderLayout.CENTER);
          
          
-         
+         comboBoxListener cbL = new comboBoxListener();
+         comboBox.addActionListener(cbL);
          
          
           
@@ -254,17 +255,25 @@ public class Frame1 {
 		class comboBoxListener implements ActionListener { 
 			public void actionPerformed(ActionEvent event) { 
 				 String sysName = comboBox.getSelectedItem().toString();
+			
 				 ClientConfig config = new ClientConfig();
 			      Client client = ClientBuilder.newClient(config);
-
+			      System.out.println(sysName);
 			        WebTarget target = client.target(getBaseURI());
 			        String Response = target.path("rest").path("getinfo").path("system").path("0").path(sysName).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 			        System.out.println(Response);
 			        
+			       //очистить, если не пустая
+			        while(model.getRowCount() > 0){
+			        	model.removeRow(0);
+			        }
+			        while(model1.getRowCount() > 0){
+			        	model1.removeRow(0);
+			        }
 			        
-			        Response = target.path("rest").path("getinfo").path("bus").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-		 	        System.out.println(Response);
-		 	        String dataM [] = Response.split("-");
+			        String Response1 = target.path("rest").path("getinfo").path("bus").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+		 	        System.out.println(Response1);
+		 	        String dataM [] = Response1.split("-");
 		 	       System.out.println(dataM.length);
 		 	       for(int i =1; i<dataM.length;i++){
 			        	System.out.println(dataM[i]);
@@ -279,9 +288,9 @@ public class Frame1 {
 		 	      // model = new DefaultTableModel(data, headers);
 		 	       
 		 	       
-		 	      Response = target.path("rest").path("getinfo").path("ecu").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-			        System.out.println(Response);
-			         String dataECU [] = Response.split("-");
+		 	      Response1 = target.path("rest").path("getinfo").path("ecu").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+			        System.out.println(Response1);
+			         String dataECU [] = Response1.split("-");
 			       System.out.println(dataECU.length);
 			       for(int i =1; i<dataECU.length;i++){
 			        	System.out.println(dataECU[i]);

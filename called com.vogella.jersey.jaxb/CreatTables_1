@@ -1,0 +1,29 @@
+ CREATE TABLE ECU (
+        ecu_id  integer primary key auto_increment,
+        NameECU  VARCHAR(50)
+         ) ;
+      CREATE TABLE Core(
+           core_id  integer primary key auto_increment,
+          NameCore  VARCHAR(50)
+        ) ;
+  
+      CREATE TABLE Task(
+          task_id  integer primary key auto_increment,
+          NameTask  VARCHAR(50),
+          Type VARCHAR(50),
+          OffsetT integer,
+          LengthT  integer,
+          Period integer 
+        ) ;
+        
+        CREATE TABLE Frame(
+          frame_id  integer primary key auto_increment,
+          NameFrame  VARCHAR(50),
+          LengthF  integer
+        ) ;
+        
+        CREATE TABLE Bus(
+          Bus_id  integer primary key auto_increment ,
+          NameBus  VARCHAR(50),
+          LengthB  integer
+        ) ;

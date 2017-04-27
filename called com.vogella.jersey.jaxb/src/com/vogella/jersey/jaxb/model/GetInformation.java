@@ -36,14 +36,15 @@ public class GetInformation {
     		break;
     		case "task": result = n_H2.getTASK(connection, par_id);
     		break;
+
     	}
 	        return result;
 		
 	}
 	@GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("{nameT}")
-    public String getHTML(@PathParam("nameT") String nT) throws SQLException, ClassNotFoundException{
+    @Path("{nameT}/{opcion}/{sysN}")
+    public String getHTML(@PathParam("nameT") String nT,@PathParam("opcion") int op,@PathParam("sysN") String nS) throws SQLException, ClassNotFoundException{
 		connectH2 n_H2 = new connectH2();
     	Connection connection = null;
     	String result = null, error="Ошибка подключения к базе!";
@@ -54,10 +55,16 @@ public class GetInformation {
 			e.printStackTrace();
 			return error;
 		}
-    	 result = n_H2.getSYSTEM(connection);
+    	switch (nT){
+		case "system": if(op ==1) result = n_H2.getSYSTEMNAME(connection);
+		else result = n_H2.getSYSTEMID(connection, nS);
+		break;
+		case "task":result = n_H2.getTASKNAME(connection, Integer.parseInt(nS));
+    	break;
     	
+    	}
 	        return result;
-		
+    	
 	}
     
 }

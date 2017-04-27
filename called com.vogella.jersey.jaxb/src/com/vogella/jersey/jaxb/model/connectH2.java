@@ -103,13 +103,13 @@ public class connectH2 {
 	 
 	 //------------------Get Information----------------------------------------
 	 public String getCORE(Connection connection,  int ecuId) throws SQLException {
-		 		String result = null;
+		 		String result ="0";
 	        	ResultSet rs;
 		        try (Statement statement = connection.createStatement()) {
 		            rs = statement.executeQuery("select core_id, namecore from core where ecu_id = "+ecuId+";");
 		            while (rs.next()) {
 		                System.out.println(rs.getInt("core_id") + " : " + rs.getString("namecore"));
-		                result=result+"\n"+"id = "+ rs.getInt("core_id") + " name = "+rs.getString("namecore");
+		                result=result+"-"+ rs.getInt("core_id") + ":"+rs.getString("namecore");
 
 		            }
 		            System.out.println("----------------");
@@ -117,13 +117,13 @@ public class connectH2 {
 		        return result;
 	        }
 	 public String getBUS(Connection connection,  int sysId) throws SQLException {
-	 		String result = null;
+	 		String result = "0";
      	ResultSet rs;
 	        try (Statement statement = connection.createStatement()) {
 	            rs = statement.executeQuery("select bus_id, namebus, speedb from bus where sys_id = "+sysId+";");
 	            while (rs.next()) {
 	                System.out.println(rs.getInt("bus_id") + " : " + rs.getString("namebus")+" : " + rs.getInt("speedb"));
-	                result=result+"\n"+" "+ rs.getInt("bus_id") + " "+rs.getString("namebus") + " " + rs.getInt("speedb");
+	                result=result+"-"+ rs.getInt("bus_id") + ":"+rs.getString("namebus") + ":" + rs.getInt("speedb");
 
 	            }
 	            System.out.println("----------------");
@@ -131,13 +131,13 @@ public class connectH2 {
 	        return result;
      }
 	 public String getECU(Connection connection,  int sysId) throws SQLException {
-	 		String result = null;
+	 		String result = "0";
   	ResultSet rs;
 	        try (Statement statement = connection.createStatement()) {
 	            rs = statement.executeQuery("select ecu_id, nameecu from ecu where sys_id = "+sysId+";");
 	            while (rs.next()) {
 	                System.out.println(rs.getInt("ecu_id") + " : " + rs.getString("nameecu"));
-	                result=result+"\n"+"id = "+ rs.getInt("ecu_id") + " name = "+rs.getString("nameecu");
+	                result=result+"-"+rs.getInt("ecu_id") + ":"+rs.getString("nameecu");
 
 	            }
 	            System.out.println("----------------");
@@ -145,27 +145,41 @@ public class connectH2 {
 	        return result;
   }
 	 public String getFRAME(Connection connection,  int taskId) throws SQLException {
-	 		String result = null;
+	 		String result = "0";
   	ResultSet rs;
 	        try (Statement statement = connection.createStatement()) {
 	            rs = statement.executeQuery("select frame_id, nameframe, lengthf from frame where task_id = "+taskId+";");
 	            while (rs.next()) {
 	                System.out.println(rs.getInt("frame_id") + " : " + rs.getString("nameframe")+" : " + rs.getInt("lengthf"));
-	                result=result+"\n"+"id = "+ rs.getInt("frame_id") + " name = "+rs.getString("nameframe") + " length = " + rs.getInt("lengthf");
+	                result=result+"-"+rs.getInt("frame_id") + ":"+rs.getString("nameframe") + ":" + rs.getInt("lengthf");
 
 	            }
 	            System.out.println("----------------");
 	        }
 	        return result;
   }
-	 public String getSYSTEM(Connection connection) throws SQLException {
-	 		String result = null;
+	 public String getSYSTEMNAME(Connection connection) throws SQLException {
+	 		String result = "0";
 	ResultSet rs;
 	        try (Statement statement = connection.createStatement()) {
 	            rs = statement.executeQuery("select * from system;");
 	            while (rs.next()) {
 	                System.out.println(rs.getInt("sys_id") + " : " + rs.getString("namesys"));
-	                result=result+"\n"+"id = "+ rs.getInt("sys_id") + " name = "+rs.getString("namesys");
+	                result=result+"-"+rs.getString("namesys");
+
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
+	 public String getSYSTEMID(Connection connection, String nameS) throws SQLException {
+	 		String result = null;
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select sys_id from system where namesys = '"+nameS+"'");
+	            while (rs.next()) {
+	                System.out.println(rs.getInt("sys_id") );
+	                result=Integer.toString(rs.getInt("sys_id"));
 
 	            }
 	            System.out.println("----------------");
@@ -173,21 +187,34 @@ public class connectH2 {
 	        return result;
 }
 	 public String getTASK(Connection connection,  int coreId) throws SQLException {
-	 		String result = null;
+	 		String result = "0";
 	ResultSet rs;
 	        try (Statement statement = connection.createStatement()) {
 	            rs = statement.executeQuery("select task_id, nametask, type, offsett, lengtht, period from task where core_id = "+coreId+";");
 	            while (rs.next()) {
 	            	System.out.println(rs.getInt("task_id") + " : " + rs.getString("nametask")+": " + rs.getString("type")+":"+rs.getInt("offsett")
                		+":"+rs.getInt("lengtht")+":"+rs.getInt("period"));
-               result=result+"id = "+ rs.getInt("task_id") + " name = "+rs.getString("nametask")+ " type = "+rs.getString("type")+"offset ="+rs.getInt("offsett")+
-       		" length = "+rs.getInt("lengtht")+" period = "+rs.getInt("period");
+               result=result+"-"+ rs.getInt("task_id") + ":"+rs.getString("nametask")+ ":"+rs.getString("type")+":"+rs.getInt("offsett")+
+       		":"+rs.getInt("lengtht")+":"+rs.getInt("period");
 	            }
 	            System.out.println("----------------");
 	        }
 	        return result;
 }
-
+	 public String getTASKNAME(Connection connection,  int coreId) throws SQLException {
+	 		String result = null;
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select task_id, nametask, type, offsett, lengtht, period from task where core_id = "+coreId+";");
+	            while (rs.next()) {
+	            	System.out.println(rs.getInt("task_id") + " : " + rs.getString("nametask")+": " + rs.getString("type")+":"+rs.getInt("offsett")
+            		+":"+rs.getInt("lengtht")+":"+rs.getInt("period"));
+            result=result+"-"+ rs.getInt("task_id") + ":"+rs.getString("nametask");
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
 	 public String resultSet(Connection connection, String nameTable) throws SQLException {
 		 ResultSet rs;
 		 String result = null;

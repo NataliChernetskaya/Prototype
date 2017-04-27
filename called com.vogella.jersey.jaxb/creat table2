@@ -1,0 +1,12 @@
+ DROP table system;
+ CREATE TABLE USERS (
+        user_id  integer primary key auto_increment,
+        Login  VARCHAR(50),
+        Password  VARCHAR(50)
+         ) ;
+  
+       CREATE TABLE SYSTEM(
+           sys_id  integer primary key auto_increment,
+          NameSys  VARCHAR(50),
+          foreign key (user_id) references users (user_id)
+        ) ;

@@ -25,6 +25,8 @@ import java.awt.ScrollPane;
 
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -64,7 +66,7 @@ import javax.swing.JButton;
 	 private JTable books,books1,books2;
 	 private DefaultTableModel model,model1,model2;
 	 String bu="", cores="";
-	public Edit_cpu (String name){
+	public Edit_cpu (String ecu_id,String name){
 		frame = new JFrame();
 		frame.setSize(1000, 300);
         frame.setLocation(100,100);
@@ -78,7 +80,7 @@ import javax.swing.JButton;
         save = new JButton("Сохранить");
         save.setToolTipText("Сохранить список компонентов");
         toolBar = new JToolBar("Панель инструментов");
-        toolBar.add(save);
+        //toolBar.add(save);
         frame.setLayout(new BorderLayout());
         frame.add(toolBar, BorderLayout.NORTH);
 
@@ -96,12 +98,12 @@ import javax.swing.JButton;
         
         prosm = new JButton("Просмотреть Core");
         prosm.setToolTipText("Просмотреть Core");
-        toolBar.add(prosm);
+       // toolBar.add(prosm);
         frame.setLayout(new BorderLayout());
         frame.add(toolBar, BorderLayout.NORTH); 
         prosm1 = new JButton("Просмотреть Task");
         prosm1.setToolTipText("Просмотреть Task");
-        toolBar.add(prosm1);
+        //toolBar.add(prosm1);
         frame.setLayout(new BorderLayout());
         frame.add(toolBar, BorderLayout.NORTH); 
         DDDD AD = new DDDD();
@@ -112,19 +114,45 @@ import javax.swing.JButton;
 		b = new JLabel(name);
      	box1.add(b);
      	
-		headers = new Object[]{"№", "Tasks"};
-        Object[][] data = {
+		headers = new Object[]{"№", "Core"};
+        /*Object[][] data = {
        	        { "1", "Task1"},
        	        { "2", "Task2"},
        	        { "3", "Task3"},
-       	    };
+       	    };*/
+		model = new DefaultTableModel(data, headers);
+        ClientConfig config = new ClientConfig();
+	      Client client = ClientBuilder.newClient(config);
+	        WebTarget target = client.target(getBaseURI());
+	        
+	        String Response1 = target.path("rest").path("getinfo").path("core").path(ecu_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        System.out.println(Response1);
+	        String dataM [] = Response1.split("-");
+	       System.out.println(dataM.length);
+	       int f=0;
+	       if(dataM.length>1){
+		       for(int i =1; i<dataM.length;i++){
+		        	System.out.println(dataM[i]);
+		       }
+		       //data = new Object [dataM.length-1][3];
+	
+		        for(int i = 1; i<dataM.length;i++){
+		        	//data[i-1] = dataM[i].split(":");
+		        	model.addRow(dataM[i].split(":"));
+		        } 
+	       }
+	        else{
+	 	    	 f=1;
+	 	      }
         
-        model = new DefaultTableModel(data, headers);
         books = new JTable(model);
         scroll = new JScrollPane(books);
         books.setGridColor(Color.BLUE);
         Box box2 = Box.createHorizontalBox();
 		box2.add(scroll);
+		
+		CoreSelectionListener csListener = new CoreSelectionListener();
+		books.getSelectionModel().addListSelectionListener(csListener);
 		
 		Box box3 = Box.createHorizontalBox();
 		JButton button1 = new JButton("OK");
@@ -142,11 +170,11 @@ import javax.swing.JButton;
 		bC = new JLabel("Task parametr");
      	boxC.add(bC);
      	headers1 = new Object[]{"№", "Name", "Type", "Offset", "Length", "Period","Frame"};
-        Object[][] data1 = {
+        Object[][] data1 = null;/*{
        	        { "1", "Task1", "","","","",""},
        	        { "2", "Task2", "","","","",""},
        	        { "3", "Task3", "","","","",""},
-       	    };
+       	    };*/
         
         model1 = new DefaultTableModel(data1, headers1);
         books1 = new JTable(model1);
@@ -154,6 +182,9 @@ import javax.swing.JButton;
         books1.setGridColor(Color.BLUE);
         Box boxC1 = Box.createHorizontalBox();
 		boxC1.add(scroll1);
+		
+		TaskSelectionListener tsListener = new TaskSelectionListener();
+		books1.getSelectionModel().addListSelectionListener(tsListener);
 		            		
 		mainBoxC.add(boxC);
 		mainBoxC.add(boxC1);
@@ -164,11 +195,11 @@ import javax.swing.JButton;
 		bF = new JLabel("Frame parametr");
      	boxF.add(bF);
      	headers2 = new Object[]{"№", "Name", "Length"};
-        Object[][] data2 = {
+        Object[][] data2 = null;/*{
        	        { "1", "Frame1", ""},
        	        { "2", "Frame2", ""},
        	        { "3", "Frame3", ""},
-       	    };
+       	    };*/
         
         model2 = new DefaultTableModel(data2, headers2);
         books2 = new JTable(model2);
@@ -199,8 +230,93 @@ import javax.swing.JButton;
 	             }
 
 	    });
+	     if(f==1){
+	    	 JLabel countLabel = new JLabel("Нет элементов для " + name); 
+             JOptionPane.showMessageDialog(null, countLabel);
+	     }
 	        		
 }
+	private URI getBaseURI() {
+        return UriBuilder.fromUri("http://localhost:8080/called_com.vogella.jersey.jaxb").build();
+}
+	
+	class CoreSelectionListener implements ListSelectionListener{
+
+		@Override
+		public void valueChanged(ListSelectionEvent arg0) {
+			String core_id=(String) model.getValueAt(books.getSelectedRow(), 0);
+			 ClientConfig config = new ClientConfig();
+		      Client client = ClientBuilder.newClient(config);
+		        WebTarget target = client.target(getBaseURI());
+		        while(model1.getRowCount() > 0){
+		        	model1.removeRow(0);
+		        }
+		        while(model2.getRowCount() > 0){
+		        	model2.removeRow(0);
+		        }
+		        
+		        String Response1 = target.path("rest").path("getinfo").path("task").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	 	        System.out.println(Response1);
+	 	        String dataM [] = Response1.split("-");
+	 	       System.out.println(dataM.length);
+	 	      if(dataM.length>1){
+	 	       for(int i =1; i<dataM.length;i++){
+		        	System.out.println(dataM[i]);
+	 	       }
+	 	       //data = new Object [dataM.length-1][3];
+
+	 	        for(int i = 1; i<dataM.length;i++){
+	 	        	//data[i-1] = dataM[i].split(":");
+	 	        	model1.addRow(dataM[i].split(":"));
+	 	        } 
+	 	      }
+	 	      else{
+	 	    	 JLabel countLabel = new JLabel("Нет элементов для " + (String) model.getValueAt(books.getSelectedRow(), 1)); 
+	             JOptionPane.showMessageDialog(null, countLabel);
+	 	      }
+	 	     books.getSelectionModel().clearSelection();
+	 	    	  
+		}
+		
+	}
+	
+	class TaskSelectionListener implements ListSelectionListener{
+
+		@Override
+		public void valueChanged(ListSelectionEvent arg0) {
+			String task_id=(String) model1.getValueAt(books1.getSelectedRow(), 0);
+			 ClientConfig config = new ClientConfig();
+		      Client client = ClientBuilder.newClient(config);
+		        WebTarget target = client.target(getBaseURI());
+		        while(model2.getRowCount() > 0){
+		        	model2.removeRow(0);
+		        }
+		        
+		        String Response1 = target.path("rest").path("getinfo").path("frame").path(task_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	 	        System.out.println(Response1);
+	 	        String dataM [] = Response1.split("-");
+	 	       System.out.println(dataM.length);
+	 	       if(dataM.length>1){
+	 	       for(int i =1; i<dataM.length;i++){
+		        	System.out.println(dataM[i]);
+	 	       }
+	 	       //data = new Object [dataM.length-1][3];
+
+	 	        for(int i = 1; i<dataM.length;i++){
+	 	        	//data[i-1] = dataM[i].split(":");
+	 	        	model2.addRow(dataM[i].split(":"));
+	 	        } 
+	 	       }
+	 	      else{
+		 	    	 JLabel countLabel = new JLabel("Нет элементов для " + (String) model1.getValueAt(books1.getSelectedRow(), 1)); 
+		             JOptionPane.showMessageDialog(null, countLabel);
+		 	      }
+	 	      books1.getSelectionModel().clearSelection();  
+		}
+		
+		
+	}
+	
 	class DDDD implements ActionListener {
 		public void actionPerformed(ActionEvent ev){
 			 if (ev.getSource() == prosm) {

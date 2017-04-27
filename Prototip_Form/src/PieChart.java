@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.*;
@@ -50,10 +51,10 @@ public class PieChart extends ApplicationFrame {
     private static TableXYDataset createDataset() {
         // Типа данные
         TimeTableXYDataset dataset = new TimeTableXYDataset();
-        dataset.add(new Year(2002), 50, "Blue");
-        dataset.add(new Year(2003), 50, "Blue");
+        dataset.add(new Year(2002), 30, "Blue");
+        dataset.add(new Year(2003), 20, "Blue");
         dataset.add(new Year(2002), 10, "Red");
-        dataset.add(new Year(2003), 50, "Red");
+        dataset.add(new Year(2003), 5, "Red");
         return dataset;
     }
  
@@ -66,7 +67,7 @@ public class PieChart extends ApplicationFrame {
  
         // OX - ось абсцисс
         // задаем название оси
-        DateAxis domainAxis = new DateAxis("Year");
+        DateAxis domainAxis = new DateAxis("Task");
         // Показываем стрелочку вправо
         domainAxis.setPositiveArrowVisible(true);
         // Задаем отступ от графика
@@ -74,7 +75,7 @@ public class PieChart extends ApplicationFrame {
  
         // OY - ось ординат
         // Задаём название оси
-        NumberAxis rangeAxis = new NumberAxis("Color");
+        NumberAxis rangeAxis = new NumberAxis("Core");
         // Задаём величину деления
         rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
         rangeAxis.setTickUnit(new NumberTickUnit(200));
@@ -124,6 +125,14 @@ public class PieChart extends ApplicationFrame {
         chart.getLegend().setVerticalAlignment(VerticalAlignment.TOP);
  
         return chart;
+    }
+    
+    public void windowClosing(WindowEvent e) {
+       // if (JOptionPane.showConfirmDialog(this, "Do you wish to exit?") == JOptionPane.OK_OPTION) {
+    	setVisible(false);    
+    	this.dispose();
+            //System.exit(0);
+        //}
     }
  
 }

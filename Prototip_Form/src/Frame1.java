@@ -114,13 +114,13 @@ public class Frame1 {
         save = new JButton("Сохранить");
         save.setToolTipText("Сохранить список компонентов");
         toolBar = new JToolBar("Панель инструментов");
-        toolBar.add(save);
+       // toolBar.add(save);
         frame.setLayout(new BorderLayout());
         frame.add(toolBar, BorderLayout.NORTH);
 
         open = new JButton("Загрузить");
         open.setToolTipText("Загрузить с бд");
-        toolBar.add(open);
+       // toolBar.add(open);
         frame.setLayout(new BorderLayout());
         frame.add(toolBar, BorderLayout.NORTH);
 
@@ -136,7 +136,7 @@ public class Frame1 {
         frame.setLayout(new BorderLayout());
         frame.add(toolBar, BorderLayout.NORTH);
      
-         pac = new JButton("Просмотреть");
+         pac = new JButton("Просмотреть компоненты");
          pac.setToolTipText("Сведения о компонентах");
          toolBar.add(pac);
          frame.setLayout(new BorderLayout());
@@ -158,9 +158,12 @@ public class Frame1 {
          
          JPanel panel = new JPanel();
          frame.add(panel, BorderLayout.CENTER);
-         String[] elements = new String[dataS.length-1];
+         String[] elements = null;
+         if(dataS.length>1){
+         elements = new String[dataS.length-1];
          for(int i=1; i<dataS.length; i++)
         	 elements[i-1]=dataS[i];
+         }
          comboBox = new JComboBox(elements);
          comboBox.setBounds(149, 31, 111, 39);
          comboBox.setAlignmentX(LEFT_ALIGNMENT);
@@ -178,23 +181,7 @@ public class Frame1 {
       	 box1.add(b);
  		 headers = new Object[]{"№", "Name", "Speed"};
          Object[][] data = null;
- 		//ClientConfig config = new ClientConfig();
- 	      //Client client = ClientBuilder.newClient(config);
-
- 	        //WebTarget target = client.target(getBaseURI());
- 	        /*Response = target.path("rest").path("getinfo").path("bus").path("12").request().accept(MediaType.TEXT_PLAIN).get(String.class);
- 	        System.out.println(Response);
- 	        String dataM [] = Response.split("-");
- 	       System.out.println(dataM.length);
- 	       for(int i =1; i<dataM.length;i++){
-	        	System.out.println(dataM[i]);
- 	       }
- 	       data = new Object [dataM.length-1][3];
-
- 	        for(int i = 1; i<dataM.length;i++){
- 	        	data[i-1] = dataM[i].split(":");
- 	        } 
-         */
+ 		
          model = new DefaultTableModel(data, headers);
          books = new JTable(model);
          scroll = new JScrollPane(books);
@@ -212,19 +199,6 @@ public class Frame1 {
          headers1 = new Object[]{"№", "Name"};
          Object[][] data1 = null;
 	    
-	       /*Response = target.path("rest").path("getinfo").path("ecu").path("12").request().accept(MediaType.TEXT_PLAIN).get(String.class);
-	        System.out.println(Response);
-	         String dataECU [] = Response.split("-");
-	       System.out.println(dataECU.length);
-	       for(int i =1; i<dataECU.length;i++){
-	        	System.out.println(dataECU[i]);
-	       }
-	       data1 = new Object [dataECU.length-1][2];
-
-	        for(int i = 1; i<dataECU.length;i++){
-	        	data1[i-1] = dataECU[i].split(":");
-	        } 
-         */
          model1 = new DefaultTableModel(data1, headers1);
          books1 = new JTable(model1);
          scroll1 = new JScrollPane(books1);
@@ -237,13 +211,6 @@ public class Frame1 {
 		 frame.add(mainBox1, BorderLayout.WEST);
 		 
 		 
-         /*JPanel panel = new JPanel();
-         frame.add(panel, BorderLayout.CENTER);
-         String[] elements = new String[] {"System1", "System2", "System3"};
-         comboBox = new JComboBox(elements);
-         comboBox.setBounds(149, 31, 111, 39);
-         comboBox.setAlignmentX(LEFT_ALIGNMENT);
-         panel.add(comboBox,BorderLayout.CENTER); */
          DDDD AD = new DDDD();
          pac.addActionListener(AD);
          otchot.addActionListener(AD);
@@ -254,6 +221,7 @@ public class Frame1 {
     }
 		class comboBoxListener implements ActionListener { 
 			public void actionPerformed(ActionEvent event) { 
+				int f1=0, f2=0;
 				 String sysName = comboBox.getSelectedItem().toString();
 			
 				 ClientConfig config = new ClientConfig();
@@ -275,6 +243,7 @@ public class Frame1 {
 		 	        System.out.println(Response1);
 		 	        String dataM [] = Response1.split("-");
 		 	       System.out.println(dataM.length);
+		 	      if(dataM.length>1){
 		 	       for(int i =1; i<dataM.length;i++){
 			        	System.out.println(dataM[i]);
 		 	       }
@@ -284,25 +253,47 @@ public class Frame1 {
 		 	        	//data[i-1] = dataM[i].split(":");
 		 	        	model.addRow(dataM[i].split(":"));
 		 	        } 
-		 	        
-		 	      // model = new DefaultTableModel(data, headers);
+		 	      }
+		 	     else{
+		 	    	 f1=1;
+		 	      }
+		 	    	  
 		 	       
 		 	       
 		 	      Response1 = target.path("rest").path("getinfo").path("ecu").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 			        System.out.println(Response1);
 			         String dataECU [] = Response1.split("-");
 			       System.out.println(dataECU.length);
-			       for(int i =1; i<dataECU.length;i++){
-			        	System.out.println(dataECU[i]);
+			       if(dataECU.length>1){
+				       for(int i =1; i<dataECU.length;i++){
+				        	System.out.println(dataECU[i]);
+				       }
+				       //data1 = new Object [dataECU.length-1][2];
+	
+				        for(int i = 1; i<dataECU.length;i++){
+				        	//data1[i-1] = dataECU[i].split(":");
+				        	model1.addRow(dataECU[i].split(":"));
+				        } 
 			       }
-			       //data1 = new Object [dataECU.length-1][2];
-
-			        for(int i = 1; i<dataECU.length;i++){
-			        	//data1[i-1] = dataECU[i].split(":");
-			        	model1.addRow(dataECU[i].split(":"));
-			        } 
+			       else{
+			 	    	 f2=1;
+			 	      }
+			       
+			       if(f1==1 && f2==1){
+			    	   JLabel countLabel = new JLabel("Нет элементов для " + sysName); 
+			             JOptionPane.showMessageDialog(null, countLabel);
+				 	 } 
+			       else if(f1==1){
+			       JLabel countLabel = new JLabel("Нет элементов BUS для " + sysName); 
+		             JOptionPane.showMessageDialog(null, countLabel);
+			       } 
+			       else if (f2==1) {
+			 		JLabel countLabel = new JLabel("Нет элементов ECU для " + sysName); 
+		             JOptionPane.showMessageDialog(null, countLabel);
+			 	 }
+			 	    	  
 			        
-			
+			         
 			} 
 			
 		}
@@ -313,7 +304,7 @@ public class Frame1 {
 			 if (ev.getSource() == pac) {
 	                
 	                if (books1.getSelectedRow() != -1) {
-	                	Edit_cpu oop = new Edit_cpu((String) model1.getValueAt(books1.getSelectedRow(), 1));
+	                	Edit_cpu oop = new Edit_cpu((String) model1.getValueAt(books1.getSelectedRow(), 0),(String) model1.getValueAt(books1.getSelectedRow(), 1));
 	                   // oop.setVisible(true);
 	                } else {
 	                    JOptionPane.showMessageDialog(frame, "Вы не выбрали ECU");

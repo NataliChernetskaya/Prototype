@@ -28,6 +28,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -58,6 +60,8 @@ import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.net.URI;
@@ -84,7 +88,7 @@ public class Frame1 {
 		JComboBox comboBox;
 		 private JFrame frame, frame1;
 		    private DefaultTableModel model,model1;
-		    private JButton save, open, add, delete, pac, otchot;
+		    private JButton  open, add, delete, pac, otchot, but, but1;
 		    private JToolBar toolBar;
 		    private JScrollPane scroll,scroll1;
 		    private JTable books,books1;
@@ -98,241 +102,362 @@ public class Frame1 {
 		    String sorting[];
 		    String str = new String("");
 		    JLabel b,b1, b2;
-		    org.w3c.dom.Document doc;
 		@SuppressWarnings("null")
 		public Frame() {
-		 frame = new JFrame();
-		frame.setSize(1000, 300);
-        frame.setLocation(100,100);
-        frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setVisible(true);
-        
+			frame = new JFrame("ModEAS");
+			frame.setSize(1050, 300); ///1000
+	        frame.setLocation(100,100);
+	        frame.setResizable(false);
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			frame.setVisible(true);      
 		
-		 ScrollPane sc = new ScrollPane();
-        //Создание кнопок и прикрепление иконок
-        save = new JButton("Сохранить");
-        save.setToolTipText("Сохранить список компонентов");
-        toolBar = new JToolBar("Панель инструментов");
-       // toolBar.add(save);
-        frame.setLayout(new BorderLayout());
-        frame.add(toolBar, BorderLayout.NORTH);
-
-        open = new JButton("Загрузить");
-        open.setToolTipText("Загрузить с бд");
-       // toolBar.add(open);
-        frame.setLayout(new BorderLayout());
-        frame.add(toolBar, BorderLayout.NORTH);
-
-        add = new JButton("Добавить");
-        add.setToolTipText("Добавить компонент");
-        toolBar.add(add);
-        frame.setLayout(new BorderLayout());
-        frame.add(toolBar, BorderLayout.NORTH);
-
-        delete = new JButton("Удалить");
-        delete.setToolTipText("Удалить компонент");
-        toolBar.add(delete);
-        frame.setLayout(new BorderLayout());
-        frame.add(toolBar, BorderLayout.NORTH);
-     
-         pac = new JButton("Просмотреть компоненты");
-         pac.setToolTipText("Сведения о компонентах");
-         toolBar.add(pac);
-         frame.setLayout(new BorderLayout());
-         frame.add(toolBar, BorderLayout.NORTH);
+			ScrollPane sc = new ScrollPane();
+			
+	        //Создание кнопок и прикрепление иконок
+			toolBar = new JToolBar("Панель инструментов");
         
-         otchot=new JButton("Отчёт");
-         otchot.setToolTipText("Графики");
-         toolBar.add(otchot);
-         frame.setLayout(new BorderLayout());
-         frame.add(toolBar, BorderLayout.NORTH);
-         
-         ClientConfig config = new ClientConfig();
-	      Client client = ClientBuilder.newClient(config);
+	        frame.setLayout(new BorderLayout());
+	        frame.add(toolBar, BorderLayout.NORTH);	        
 
+	        add = new JButton("Добавить");
+	        add.setToolTipText("Добавить компонент");
+	        toolBar.add(add);
+	        frame.setLayout(new BorderLayout());
+	        frame.add(toolBar, BorderLayout.NORTH);
+
+	        delete = new JButton("Удалить");
+	        delete.setToolTipText("Удалить компонент");
+	        toolBar.add(delete);
+	        frame.setLayout(new BorderLayout());
+	        frame.add(toolBar, BorderLayout.NORTH);
+     
+	        pac = new JButton("Просмотреть компоненты");
+	        pac.setToolTipText("Сведения о компонентах");
+	        toolBar.add(pac);
+	        frame.setLayout(new BorderLayout());
+	        frame.add(toolBar, BorderLayout.NORTH);
+        
+	        otchot=new JButton("Отчёт");
+	        otchot.setToolTipText("Графики");
+	        toolBar.add(otchot);
+	        frame.setLayout(new BorderLayout());
+	        frame.add(toolBar, BorderLayout.NORTH);
+	        
+	        //request to server
+	      	ClientConfig config = new ClientConfig();
+	      	Client client = ClientBuilder.newClient(config);
+	      	
 	        WebTarget target = client.target(getBaseURI());
 	        String Response = target.path("rest").path("getinfo").path("system").path("1").path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
 	        System.out.println(Response);
 	        String dataS [] = Response.split("-");
          
-         JPanel panel = new JPanel();
-         frame.add(panel, BorderLayout.CENTER);
-         String[] elements = null;
-         if(dataS.length>1){
-         elements = new String[dataS.length-1];
-         for(int i=1; i<dataS.length; i++)
-        	 elements[i-1]=dataS[i];
-         }
-         comboBox = new JComboBox(elements);
-         comboBox.setBounds(149, 31, 111, 39);
-         comboBox.setAlignmentX(LEFT_ALIGNMENT);
-         panel.add(comboBox,BorderLayout.CENTER);
+	         JPanel panel = new JPanel();
+	         frame.add(panel, BorderLayout.CENTER);
+	         String[] elements = null;
+	         if(dataS.length>1){
+	        	 elements = new String[dataS.length-1];
+		         for(int i=1; i<dataS.length; i++){
+		        	elements[i-1]=dataS[i];
+		            System.out.println( elements[i-1]);
+		         }
+	         }
+	         comboBox = new JComboBox(elements);
+	         comboBox.setBounds(149, 31, 200, 39); ///111
+	         comboBox.setAlignmentX(LEFT_ALIGNMENT);
+	         panel.add(comboBox,BorderLayout.CENTER);
+	         //comboBox.setEditable(true);
          
+	         comboBoxListener cbL = new comboBoxListener();
+	         comboBox.addActionListener(cbL);
          
-         comboBoxListener cbL = new comboBoxListener();
-         comboBox.addActionListener(cbL);
-         
-         
+	         /*EditCBListener editCB = new EditCBListener();
+	         comboBox.addItemListener(editCB);*/
           
-         Box mainBox = Box.createVerticalBox();
-         Box box1 = Box.createHorizontalBox();
- 		 b = new JLabel("BUS Parameter");
-      	 box1.add(b);
- 		 headers = new Object[]{"№", "Name", "Speed"};
-         Object[][] data = null;
+	         Box mainBox = Box.createVerticalBox();
+	         Box box1 = Box.createHorizontalBox();
+	 		 b = new JLabel("BUS Parameter");
+	      	 box1.add(b);
+	 		 headers = new Object[]{"№", "Name", "Speed"};
+	         Object[][] data = null;
  		
-         model = new DefaultTableModel(data, headers);
-         books = new JTable(model);
-         scroll = new JScrollPane(books);
-         books.setGridColor(Color.BLUE);
-         Box box2 = Box.createHorizontalBox();
- 		 box2.add(scroll);
- 		 mainBox.add(box1);
-		 mainBox.add(box2);
-		 frame.add(mainBox, BorderLayout.EAST);
-		 books.setCellSelectionEnabled(false);
-		 Box mainBox1 = Box.createVerticalBox();
-         Box box3 = Box.createHorizontalBox();
- 		 b1 = new JLabel("ECU Parameter");
-      	 box3.add(b1);
-         headers1 = new Object[]{"№", "Name"};
-         Object[][] data1 = null;
-	    
-         model1 = new DefaultTableModel(data1, headers1);
-         books1 = new JTable(model1);
-         scroll1 = new JScrollPane(books1);
-         books1.setGridColor(Color.BLUE);
-         //Размещение таблицы с данными
-         Box box4 = Box.createHorizontalBox();
- 		 box4.add(scroll1);
- 		 mainBox1.add(box3);
-		 mainBox1.add(box4);
-		 frame.add(mainBox1, BorderLayout.WEST);
+	         model = new DefaultTableModel(data, headers);
+	         books = new JTable(model);
+	         scroll = new JScrollPane(books);
+	         books.setGridColor(Color.BLUE);
+	         Box box2 = Box.createHorizontalBox();
+	 		 box2.add(scroll);
+	 		 Box boxbut = Box.createHorizontalBox();
+	 		 but = new JButton("Добавить");
+	 		 boxbut.add(but);
+	 		 mainBox.add(box1);
+	 		 mainBox.add(box2);
+	 		 mainBox.add(boxbut);
+	 		 frame.add(mainBox, BorderLayout.EAST);
+			 
+			 books.setCellSelectionEnabled(false);
+			 Box mainBox1 = Box.createVerticalBox();
+	         Box box3 = Box.createHorizontalBox();
+	 		 b1 = new JLabel("ECU Parameter");
+	      	 box3.add(b1);
+	         headers1 = new Object[]{"№", "Name"};
+	         Object[][] data1 = null;
+		    
+	         model1 = new DefaultTableModel(data1, headers1);
+	         books1 = new JTable(model1);
+	         scroll1 = new JScrollPane(books1);
+	         books1.setGridColor(Color.BLUE);
+	         //Размещение таблицы с данными
+	         Box box4 = Box.createHorizontalBox();
+	 		 box4.add(scroll1);
+	 		 Box boxbut1 = Box.createHorizontalBox();
+	 		 but1 = new JButton("Добавить");
+	 		 boxbut1.add(but1);
+	 		 mainBox1.add(box3);
+			 mainBox1.add(box4);
+			 mainBox1.add(but1);
+			 
+			 frame.add(mainBox1, BorderLayout.WEST);
 		 
+			 EditTableListener editTableListener = new EditTableListener();
+			 model.addTableModelListener(editTableListener);
+			 model1.addTableModelListener(editTableListener);		 
 		 
-         DDDD AD = new DDDD();
-         pac.addActionListener(AD);
-         otchot.addActionListener(AD);
+	         DDDD AD = new DDDD();
+	         pac.addActionListener(AD);
+	         add.addActionListener(AD);
+	         but1.addActionListener(AD);
+	         but.addActionListener(AD);
 
-		 }
-		private URI getBaseURI() {
-            return UriBuilder.fromUri("http://localhost:8080/called_com.vogella.jersey.jaxb").build();
+	}
+		
+	private URI getBaseURI() {
+		return UriBuilder.fromUri("http://localhost:8080/called_com.vogella.jersey.jaxb").build();
     }
-		class comboBoxListener implements ActionListener { 
-			public void actionPerformed(ActionEvent event) { 
-				int f1=0, f2=0;
-				 String sysName = comboBox.getSelectedItem().toString();
-			
-				 ClientConfig config = new ClientConfig();
-			      Client client = ClientBuilder.newClient(config);
-			      System.out.println(sysName);
-			        WebTarget target = client.target(getBaseURI());
-			        String Response = target.path("rest").path("getinfo").path("system").path("0").path(sysName).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-			        System.out.println(Response);
-			        
-			       //очистить, если не пустая
-			        while(model.getRowCount() > 0){
-			        	model.removeRow(0);
-			        }
-			        while(model1.getRowCount() > 0){
-			        	model1.removeRow(0);
-			        }
-			        
-			        String Response1 = target.path("rest").path("getinfo").path("bus").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-		 	        System.out.println(Response1);
-		 	        String dataM [] = Response1.split("-");
-		 	       System.out.println(dataM.length);
-		 	      if(dataM.length>1){
-		 	       for(int i =1; i<dataM.length;i++){
-			        	System.out.println(dataM[i]);
-		 	       }
-		 	       //data = new Object [dataM.length-1][3];
-
-		 	        for(int i = 1; i<dataM.length;i++){
-		 	        	//data[i-1] = dataM[i].split(":");
-		 	        	model.addRow(dataM[i].split(":"));
-		 	        } 
-		 	      }
-		 	     else{
-		 	    	 f1=1;
-		 	      }
-		 	    	  
-		 	       
-		 	       
-		 	      Response1 = target.path("rest").path("getinfo").path("ecu").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-			        System.out.println(Response1);
-			         String dataECU [] = Response1.split("-");
-			       System.out.println(dataECU.length);
-			       if(dataECU.length>1){
-				       for(int i =1; i<dataECU.length;i++){
-				        	System.out.println(dataECU[i]);
-				       }
-				       //data1 = new Object [dataECU.length-1][2];
 	
-				        for(int i = 1; i<dataECU.length;i++){
-				        	//data1[i-1] = dataECU[i].split(":");
-				        	model1.addRow(dataECU[i].split(":"));
-				        } 
-			       }
-			       else{
-			 	    	 f2=1;
-			 	      }
-			       
-			       if(f1==1 && f2==1){
-			    	   JLabel countLabel = new JLabel("Нет элементов для " + sysName); 
-			             JOptionPane.showMessageDialog(null, countLabel);
-				 	 } 
-			       else if(f1==1){
-			       JLabel countLabel = new JLabel("Нет элементов BUS для " + sysName); 
-		             JOptionPane.showMessageDialog(null, countLabel);
-			       } 
-			       else if (f2==1) {
-			 		JLabel countLabel = new JLabel("Нет элементов ECU для " + sysName); 
-		             JOptionPane.showMessageDialog(null, countLabel);
-			 	 }
-			 	    	  
-			        
-			         
-			} 
+	class comboBoxListener implements ActionListener { 
+		public void actionPerformed(ActionEvent event) { 
+			int f1=0, f2=0;
+			String sysName = comboBox.getSelectedItem().toString();
 			
+			ClientConfig config = new ClientConfig();
+			Client client = ClientBuilder.newClient(config);
+			System.out.println(sysName);
+			WebTarget target = client.target(getBaseURI());
+			String Response = target.path("rest").path("getinfo").path("system").path("0").path(sysName).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+			System.out.println(Response);
+			        
+			//очистить, если не пустая
+			while(model.getRowCount() > 0){
+				model.removeRow(0);
+			}
+			while(model1.getRowCount() > 0){
+				model1.removeRow(0);
+			}
+			        
+			String Response1 = target.path("rest").path("getinfo").path("bus").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+			System.out.println(Response1);
+			String dataM [] = Response1.split("-");
+			System.out.println(dataM.length);
+			if(dataM.length>1){
+				for(int i =1; i<dataM.length;i++){
+					System.out.println(dataM[i]);
+				}
+				//data = new Object [dataM.length-1][3];
+	
+				for(int i = 1; i<dataM.length;i++){
+					//data[i-1] = dataM[i].split(":");
+					model.addRow(dataM[i].split(":"));
+				} 
+			}
+			else{
+				f1=1;
+			} 	    	   	       
+		 	       
+			Response1 = target.path("rest").path("getinfo").path("ecu").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+			System.out.println(Response1);
+			String dataECU [] = Response1.split("-");
+			System.out.println(dataECU.length);
+			if(dataECU.length>1){
+				for(int i =1; i<dataECU.length;i++){
+					System.out.println(dataECU[i]);
+				}
+				//data1 = new Object [dataECU.length-1][2];
+	
+				for(int i = 1; i<dataECU.length;i++){
+					//data1[i-1] = dataECU[i].split(":");
+					model1.addRow(dataECU[i].split(":"));
+				} 
+			}
+			else{
+				f2=1;
+			}
+			       
+			if(f1==1 && f2==1){
+				JLabel countLabel = new JLabel("Нет элементов для " + sysName); 
+				JOptionPane.showMessageDialog(null, countLabel);
+			} 
+			else if(f1==1){
+				JLabel countLabel = new JLabel("Нет элементов BUS для " + sysName); 
+				JOptionPane.showMessageDialog(null, countLabel);
+			} 
+			else if (f2==1) {
+				JLabel countLabel = new JLabel("Нет элементов ECU для " + sysName); 
+				JOptionPane.showMessageDialog(null, countLabel);
+			}		 	    	  
+		} 		
+	}
+		
+	/*class EditCBListener implements ItemListener{
+		@Override
+		public void itemStateChanged(ItemEvent ev) {
+			if(ev.getSource() == comboBox){
+				int rowIndex = comboBox.getSelectedIndex();
+				if(rowIndex>=0){
+					String sys_name=(String) comboBox.getSelectedItem();
+					System.out.println("sys_name = " + sys_name);
+			//books1.getSelectionModel().clearSelection();
+			 ClientConfig config = new ClientConfig();
+		      Client client = ClientBuilder.newClient(config);
+		        WebTarget target = client.target(getBaseURI());
+		        
+		        	//model.removeRow(rowIndex);		        				        
+		        String result = target.path("rest").path("edit").path(sys_name).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+		        JLabel countLabel = new JLabel(result); 
+	             JOptionPane.showMessageDialog(null, countLabel);   
+			}
+			}
+			
+		}	
+		
+	}
+*/
+	class EditTableListener implements TableModelListener{
+		@Override
+		public void tableChanged(TableModelEvent ev) {
+			if(ev.getSource() == model){
+				int rowIndex = books.getEditingRow();//getSelectedRow();
+				if(rowIndex>=0){
+					String bus_id=(String) model.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
+					String bus_name=(String) model.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);
+					String bus_speed = (String) model.getValueAt(rowIndex,2);
+			
+					//books1.getSelectionModel().clearSelection();
+					ClientConfig config = new ClientConfig();
+					Client client = ClientBuilder.newClient(config);
+					WebTarget target = client.target(getBaseURI());
+		        
+		        	//model.removeRow(rowIndex);		        				        
+					String result = target.path("rest").path("edit").path("bus").path(bus_name).path(bus_speed).path(bus_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					JLabel countLabel = new JLabel(result); 
+					JOptionPane.showMessageDialog(null, countLabel);   
+				}
+			}
+			if(ev.getSource() == model1){
+				int rowIndex = books1.getEditingRow();//getSelectedRow();
+				if(rowIndex>=0){
+					String ecu_id=(String) model1.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
+					String ecu_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);			
+			
+					//books1.getSelectionModel().clearSelection();
+					ClientConfig config = new ClientConfig();
+					Client client = ClientBuilder.newClient(config);
+					WebTarget target = client.target(getBaseURI());
+		        
+		        	//model1.removeRow(rowIndex);		        				        
+					String result = target.path("rest").path("edit").path("ecu").path(ecu_name).path(ecu_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					JLabel countLabel = new JLabel(result); 
+					JOptionPane.showMessageDialog(null, countLabel);   
+				}
+			}
 		}
-
-
+	}
+	
 	class DDDD implements ActionListener {
 		public void actionPerformed(ActionEvent ev){
-			 if (ev.getSource() == pac) {
-	                
+			 if (ev.getSource() == pac) {                
 	                if (books1.getSelectedRow() != -1) {
 	                	Edit_cpu oop = new Edit_cpu((String) model1.getValueAt(books1.getSelectedRow(), 0),(String) model1.getValueAt(books1.getSelectedRow(), 1));
 	                   // oop.setVisible(true);
-	                } else {
+	                } 
+	                else {
 	                    JOptionPane.showMessageDialog(frame, "Вы не выбрали ECU");
 	                }
-	            }
-			 if (ev.getSource() == otchot) {
-	                
-
-				 PieChart demo = new PieChart("JFreeChart: StackedXYBarChart");
-			        demo.pack();
-			        // И показываем
-			       RefineryUtilities.centerFrameOnScreen(demo);
-			       demo.setVisible(true);
-				 /*DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-				 dataset.setValue(10, "ECU1", "Core1");
-				 dataset.setValue(10, "ECU1", "Task 1");
-				 dataset.setValue(10, "ECU1", "Frame 1");
-				 
-				 JFreeChart chart = ChartFactory.createBarChart("Modeling ECU1", "Modeling components", "Quantity", dataset, PlotOrientation.VERTICAL,false, true,false);
-				 CategoryPlot p= chart.getCategoryPlot();
-				 p.setRangeGridlinePaint(Color.black);
-				 
-				 ChartFrame f=new ChartFrame ("ModEAS", chart); 
-				 f.setVisible(true);
-				 f.setSize(450,350);*/
-		 
-	            }
-	}
+			 }
+			 
+			 if (ev.getSource() == but1) {
+ 				 AddEcu oecu = new AddEcu();
+			 }
+             if (ev.getSource() == but) {
+  				 AddBus oecu = new AddBus();
+ 			 }
+             if (ev.getSource() == add) {
+   				 AddSyst oecu = new AddSyst();
+  			 }
+			 
+			 if (ev.getSource() == delete) {
+				 if (books1.getSelectedRow() != -1) {
+					 String ecu_id;
+					 int rowIndex = books1.getSelectedRow();
+					 if(rowIndex>=0){
+						 ecu_id=(String) model1.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
+								//bus_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);						
+						
+						//books1.getSelectionModel().clearSelection();
+						 ClientConfig config = new ClientConfig();
+						 Client client = ClientBuilder.newClient(config);
+						 WebTarget target = client.target(getBaseURI());
+					        
+						 model1.removeRow(rowIndex);		        				        
+						 String result = target.path("rest").path("delitem").path("ecu").path(ecu_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						 JLabel countLabel = new JLabel(result); 
+						 JOptionPane.showMessageDialog(null, countLabel);   
+					 }
+				 }
+				 else if (books.getSelectedRow() != -1){
+					 String bus_id;
+					 int rowIndex = books.getSelectedRow();
+					 if(rowIndex>=0){
+						 bus_id=(String) model.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
+						//bus_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);												
+						//books1.getSelectionModel().clearSelection();
+						 ClientConfig config = new ClientConfig();
+					     Client client = ClientBuilder.newClient(config);
+					     WebTarget target = client.target(getBaseURI());
+					        
+					     model.removeRow(rowIndex);		        				        
+					     String result = target.path("rest").path("delitem").path("bus").path(bus_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					     JLabel countLabel = new JLabel(result); 
+					     JOptionPane.showMessageDialog(null, countLabel);   
+					 }
+				 }  
+				 else if (comboBox.getSelectedIndex()>=0){
+					 //int index = comboBox.getSelectedIndex();
+					 String sysName = comboBox.getSelectedItem().toString();				
+					 ClientConfig config = new ClientConfig();
+				     Client client = ClientBuilder.newClient(config);
+				     System.out.println(sysName);
+				     WebTarget target = client.target(getBaseURI());
+				     String Response = target.path("rest").path("getinfo").path("system").path("0").path(sysName).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+				     System.out.println(Response);
+				     String result = target.path("rest").path("delitem").path("system").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+				     System.out.println(result);
+				     while(model.getRowCount() > 0){
+				    	 model.removeRow(0);
+				     }
+				     while(model1.getRowCount() > 0){
+				    	 model1.removeRow(0);
+				     }				        
+			        
+				     comboBox.remove(comboBox.getSelectedIndex());//(index);
+				     JLabel countLabel = new JLabel(result); 
+				     JOptionPane.showMessageDialog(null, countLabel);   	 
+				 }
+				 else {
+					 JLabel countLabel = new JLabel("Не выбран элемент!"); 
+		             JOptionPane.showMessageDialog(null, countLabel);  
+				 }
+			 }
 		}
-
 	}
+}

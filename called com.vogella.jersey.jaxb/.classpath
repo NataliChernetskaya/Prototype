@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/aopalliance-repackaged-2.5.0-b32.jar"/>
+	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/h2-1.4.194.jar"/>
 	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/hk2-api-2.5.0-b32.jar"/>
 	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/hk2-locator-2.5.0-b32.jar"/>
 	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/hk2-utils-2.5.0-b32.jar"/>
@@ -23,7 +24,5 @@
 	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/osgi-resource-locator-1.0.1.jar"/>
 	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/persistence-api-1.0.jar"/>
 	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/validation-api-1.1.0.Final.jar"/>
-	<classpathentry kind="lib" path="D:/git/Prototype/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/h2-1.4.194.jar"/>
-	<classpathentry kind="lib" path="D:/git/EAS/called com.vogella.jersey.jaxb/WebContent/WEB-INF/lib/jersey-media-json-jackson-2.26-b03.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

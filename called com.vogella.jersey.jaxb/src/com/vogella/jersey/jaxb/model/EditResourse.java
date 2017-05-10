@@ -15,8 +15,8 @@ import javax.ws.rs.core.MediaType;
 public class EditResourse {
 	@GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("{nameT}/{name}/{parentId}/{itemId}")
-    public String getHTML(@PathParam("nameT") String nT, @PathParam("name") String n, @PathParam("parentId") int par_id, @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
+    @Path("{nameT}/{name}/{itemId}")
+    public String getHTML(@PathParam("nameT") String nT, @PathParam("name") String n, @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
     	connectH2 n_H2 = new connectH2();
     	Connection connection = null;
     	String result = null;
@@ -29,7 +29,7 @@ public class EditResourse {
 		}
     	if(nT.equals("core")){
     	try {
-			n_H2.editCORE(connection, n,par_id, id);
+			n_H2.editCORE(connection, n, id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,7 +38,7 @@ public class EditResourse {
     	}
     	else if(nT.equals("ecu")){
     		try {
-				n_H2.editECU(connection, n, par_id, id);
+				n_H2.editECU(connection, n, id);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -50,8 +50,8 @@ public class EditResourse {
     }
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("{nameT}/{name}/{lenorspeed}/{parentId}/{itemId}")
-    public String getHTML(@PathParam("nameT") String nT, @PathParam("name") String n, @PathParam("lenorspeed") int ls, @PathParam("parentId") int par_id, @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
+    @Path("{nameT}/{name}/{lenorspeed}/{itemId}")
+    public String getHTML(@PathParam("nameT") String nT, @PathParam("name") String n, @PathParam("lenorspeed") int ls,  @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
     	connectH2 n_H2 = new connectH2();
     	Connection connection = null;
     	String result = null;
@@ -64,7 +64,7 @@ public class EditResourse {
 		}
     	if(nT.equals("bus")){
     	try {
-			n_H2.editBUS(connection, n, ls, par_id, id);
+			n_H2.editBUS(connection, n, ls, id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,7 +73,7 @@ public class EditResourse {
     	}
     	else if(nT.equals("frame")){
     		try {
-				n_H2.editFRAME(connection, n,ls, par_id, id);
+				n_H2.editFRAME(connection, n,ls, id);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -85,8 +85,9 @@ public class EditResourse {
     }
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("{name}/{itemId}")
-    public String getHTML(@PathParam("name") String n, @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
+    @Path("{name}")
+    public String getHTML(@PathParam("name") String n) throws ClassNotFoundException, SQLException {
+    	String id=null;
     	connectH2 n_H2 = new connectH2();
     	Connection connection = null;
     	String result = null;
@@ -99,7 +100,16 @@ public class EditResourse {
 		}
     	
     	try {
-			n_H2.editSYSTEM(connection, n, id);
+			id = n_H2.getSYSTEMID(connection, n);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Ошибка! Проверьте корректность введенных данных!";
+		}  	  
+    	System.out.println("id = " + id);
+    	
+    	try {
+			n_H2.editSYSTEM(connection, n, Integer.parseInt(id));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,8 +120,8 @@ public class EditResourse {
     }
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("{name}/{type}/{offset}/{lenght}/{period}/{parentId}/{itemId}")
-    public String getHTML(@PathParam("name") String n, @PathParam("type") String t,@PathParam("offset") int of, @PathParam("lenght") int l,@PathParam("period") int p, @PathParam("parentId") int par_id, @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
+    @Path("{name}/{type}/{offset}/{lenght}/{period}/{itemId}")
+    public String getHTML(@PathParam("name") String n, @PathParam("type") String t,@PathParam("offset") int of, @PathParam("lenght") int l,@PathParam("period") int p,  @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
     	connectH2 n_H2 = new connectH2();
     	Connection connection = null;
     	String result = null;
@@ -124,7 +134,7 @@ public class EditResourse {
 		}
     	
     	try {
-			n_H2.editTASK(connection, n,t,of,l,p, par_id, id);
+			n_H2.editTASK(connection, n,t,of,l,p, id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

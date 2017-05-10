@@ -54,49 +54,62 @@ public class connectH2 {
 	 //---------------------Delete From Table--------------------------------------------------
 	 public void deleteFromTable(Connection connection,String nameT, int itemId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
-	        	statement.execute("delete from "+nameT+" where  bus_id = "+itemId);
+	        	switch (nameT){
+	        	case "system": statement.execute("delete from system where  sys_id = "+itemId);
+	        	break;
+	        	case "bus": statement.execute("delete from bus where  bus_id = "+itemId);
+	        	break;
+	        	case "ecu": statement.execute("delete from ecu where  ecu_id = "+itemId);
+	        	break;
+	        	case "core": statement.execute("delete from core where  core_id = "+itemId);
+	        	break;
+	        	case "task": statement.execute("delete from frame where  task_id = "+itemId);
+	        			statement.execute("delete from task where  task_id = "+itemId);       			
+	        	break;
+	        	case "frame": statement.execute("delete from frame where  frame_id = "+itemId);
+	        	break;
+	        	}
 	        }
 	    }
 	 
 	 //----------------------------------------------------------------------------
 	 //-------------Edit Item---------------------------------------------------
-	 public void editBUS(Connection connection, String nname, int speedb, int busId, int sysId) throws SQLException {
+	 public void editBUS(Connection connection, String nname, int speedb, int busId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
 	        	
-	        	statement.execute("update BUS set namebus = '"+nname+"', speedb = "+speedb+", sys_id="+sysId+" where id = "+busId+")");
+	        	statement.execute("update BUS set namebus = '"+nname+"', speedb = "+speedb+" where bus_id = "+busId);
 	        }
 	    }
-	 public void editCORE(Connection connection, String nname, int ecuId, int coreId) throws SQLException {
+	 public void editCORE(Connection connection, String nname, int coreId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
 	        	
-	        	statement.execute("update core set namecore ='"+nname+"' , ecu_id ="+ecuId+" where core_id = "+coreId+") ");
+	        	statement.execute("update core set namecore ='"+nname+"'  where core_id = "+coreId);
 	        }
 	    }
-	 public void editECU(Connection connection, String nname, int sysId, int ecuId) throws SQLException {
+	 public void editECU(Connection connection, String nname,  int ecuId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
 	        	
-	        	statement.execute("update ecu set nameecu = '"+nname+"', sys_id ="+sysId+"  where ecu_id = "+ecuId+")");
+	        	statement.execute("update ecu set nameecu = '"+nname+"'  where ecu_id = "+ecuId);
 	        }
 	    }
-	 public void editFRAME(Connection connection, String nname, int lengthf, int taskId, int frameId) throws SQLException {
+	 public void editFRAME(Connection connection, String nname, int lengthf,  int frameId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
 	        	
 	        	statement.execute("update frame set nameframe = '"+nname+"', lengthf = "+lengthf+""
-	        			+ " , task_Id = "+taskId+" where frame_id = "+frameId+")");
+	        			+ "   where frame_id = "+frameId);
 	        }
 	    }
 	 public void editSYSTEM(Connection connection, String nname, int sysId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
 	        	
-	        	statement.execute("update system set namesys ='"+nname+"' where sys_id = "+sysId+")");
+	        	statement.execute("update system set namesys ='"+nname+"' where sys_id = "+sysId);
 	        }
 	    }
-	 public void editTASK(Connection connection, String nname, String type, int offsett, int lengtht, int period, int coreId, int taskId) throws SQLException {
+	 public void editTASK(Connection connection, String nname, String type, int offsett, int lengtht, int period,  int taskId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
 	        	
 	        	statement.execute("update task set nametask = '"+nname+"', type = '"+type+"', offsett ="+offsett+" , lengtht = "+lengtht+", "
-	        			+ "period = "+period+", core_Id ="+coreId+"where task_id = "+taskId+ ")");
+	        			+ "period = "+period+" where task_id = "+taskId);
 	        }
 	    }
 	 //--------------------------------------------------------------------------
@@ -116,6 +129,20 @@ public class connectH2 {
 		        }
 		        return result;
 	        }
+	 public String getCOREID(Connection connection,  int ecuId) throws SQLException {
+	 		String result ="0";
+     	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select core_id, namecore from core where ecu_id = "+ecuId+";");
+	            while (rs.next()) {
+	                System.out.println(rs.getInt("core_id") + " : " + rs.getString("namecore"));
+	                result=result+"-"+ rs.getInt("core_id");
+
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+     }
 	 public String getBUS(Connection connection,  int sysId) throws SQLException {
 	 		String result = "0";
      	ResultSet rs;
@@ -130,6 +157,20 @@ public class connectH2 {
 	        }
 	        return result;
      }
+	 public String getBUSID(Connection connection,  int sysId) throws SQLException {
+	 		String result = "0";
+  	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select bus_id, namebus, speedb from bus where sys_id = "+sysId+";");
+	            while (rs.next()) {
+	                System.out.println(rs.getInt("bus_id") + " : " + rs.getString("namebus")+" : " + rs.getInt("speedb"));
+	                result=result+"-"+ rs.getInt("bus_id");
+
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+  }
 	 public String getECU(Connection connection,  int sysId) throws SQLException {
 	 		String result = "0";
   	ResultSet rs;
@@ -144,6 +185,20 @@ public class connectH2 {
 	        }
 	        return result;
   }
+	 public String getECUID(Connection connection,  int sysId) throws SQLException {
+	 		String result = "0";
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select ecu_id, nameecu from ecu where sys_id = "+sysId+";");
+	            while (rs.next()) {
+	                System.out.println(rs.getInt("ecu_id") + " : " + rs.getString("nameecu"));
+	                result=result+"-"+rs.getInt("ecu_id");
+
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
 	 public String getFRAME(Connection connection,  int taskId) throws SQLException {
 	 		String result = "0";
   	ResultSet rs;
@@ -173,7 +228,7 @@ public class connectH2 {
 	        return result;
 }
 	 public String getSYSTEMID(Connection connection, String nameS) throws SQLException {
-	 		String result = null;
+	 		String result = "0";
 	ResultSet rs;
 	        try (Statement statement = connection.createStatement()) {
 	            rs = statement.executeQuery("select sys_id from system where namesys = '"+nameS+"'");
@@ -202,7 +257,7 @@ public class connectH2 {
 	        return result;
 }
 	 public String getTASKNAME(Connection connection,  int coreId) throws SQLException {
-	 		String result = null;
+	 		String result = "0";
 	ResultSet rs;
 	        try (Statement statement = connection.createStatement()) {
 	            rs = statement.executeQuery("select task_id, nametask, type, offsett, lengtht, period from task where core_id = "+coreId+";");
@@ -210,6 +265,20 @@ public class connectH2 {
 	            	System.out.println(rs.getInt("task_id") + " : " + rs.getString("nametask")+": " + rs.getString("type")+":"+rs.getInt("offsett")
             		+":"+rs.getInt("lengtht")+":"+rs.getInt("period"));
             result=result+"-"+ rs.getInt("task_id") + ":"+rs.getString("nametask");
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
+	 public String getTASKID(Connection connection,  int coreId) throws SQLException {
+	 		String result = "0";
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select task_id from task where core_id = "+coreId+";");
+	            while (rs.next()) {
+	            	System.out.println(rs.getInt("task_id") + " : " + rs.getString("nametask")+": " + rs.getString("type")+":"+rs.getInt("offsett")
+         		+":"+rs.getInt("lengtht")+":"+rs.getInt("period"));
+         result=result+"-"+ rs.getInt("task_id");
 	            }
 	            System.out.println("----------------");
 	        }

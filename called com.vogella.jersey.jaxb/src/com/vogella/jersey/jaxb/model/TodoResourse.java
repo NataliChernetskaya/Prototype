@@ -119,8 +119,8 @@ public class TodoResourse {
         }
         @GET
         @Produces(MediaType.TEXT_PLAIN)
-        @Path("{name}")
-        public String getHTML(@PathParam("name") String n) throws ClassNotFoundException, SQLException {
+        @Path("{name}/{userId}")
+        public String getHTML(@PathParam("name") String n, @PathParam("userId") int uId) throws ClassNotFoundException, SQLException {
         	connectH2 n_H2 = new connectH2();
         	Connection connection = null;
         	String result = null;
@@ -133,7 +133,7 @@ public class TodoResourse {
 			}
         	
         	try {
-				n_H2.addtoSYSTEM(connection, n);
+				n_H2.addtoSYSTEM(connection, n, uId);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -37,10 +37,10 @@ public class connectH2 {
 	        	statement.execute("insert into frame (nameframe, lengthf, task_Id) values('"+nname+"',"+lengthf+","+taskId+")");
 	        }
 	    }
-	 public void addtoSYSTEM(Connection connection, String nname) throws SQLException {//user_id
+	 public void addtoSYSTEM(Connection connection, String nname, int uId) throws SQLException {//user_id
 	        try (Statement statement = connection.createStatement()) {
 	        	
-	        	statement.execute("insert into system (namesys) values('"+nname+"')");
+	        	statement.execute("insert into system (namesys, user_id) values('"+nname+"',"+uId+")");
 	        }
 	    }
 	 public void addtoTASK(Connection connection, String nname, String type, int offsett, int lengtht, int period, int coreId) throws SQLException {

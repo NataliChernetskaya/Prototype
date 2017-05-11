@@ -1,8 +1,10 @@
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -19,7 +21,13 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 
+import org.glassfish.jersey.client.ClientConfig;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
@@ -27,17 +35,22 @@ import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 
+import javafx.scene.control.ComboBox;
+
 public class AddSyst {
 	
 	JTextField  nam, len;
 	JLabel b,tl;
 	JFrame frame;
 	JButton okcore, notcore;
+	String cbItem = null;
+	int f=0;
 	   
 	public AddSyst(){
 		
-		frame = new JFrame("System");
 		
+		
+		frame = new JFrame("System");
 		frame.setSize(250,100);
 		frame.setLocation(500,100);
 	   	frame.setResizable(false);
@@ -69,9 +82,16 @@ public class AddSyst {
 	    frame.add(mainBox);
 	    DDDD AD = new DDDD();
 	    notcore.addActionListener(AD);
+	    okcore.addActionListener(AD);
 		
 		
 	}
+	
+	
+	
+	private URI getBaseURI() {
+		return UriBuilder.fromUri("http://localhost:8080/called_com.vogella.jersey.jaxb").build();
+    }
 	
 	class DDDD implements ActionListener {
 	
@@ -79,6 +99,41 @@ public class AddSyst {
 			 if (ev.getSource() == notcore) {
 				 
 				 frame.dispose();
+				 
+			 }
+			 if (ev.getSource() == okcore) {
+				 String sysName = nam.getText();
+				 if(sysName.trim().length()>0){
+					ClientConfig config = new ClientConfig();
+					Client client = ClientBuilder.newClient(config);
+					System.out.println(sysName);
+					WebTarget target = client.target(getBaseURI());
+					
+					
+					///////////////////////////////////////////////USER ID 
+					String Response = target.path("rest").path("add").path(sysName).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					System.out.println(Response);
+					Response = target.path("rest").path("getinfo").path("system").path("1").path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	   		        System.out.println(Response);
+	   		        String dataS [] = Response.split("-");
+	   		        String[] elements = null;
+	   		        if(dataS.length>1){
+	   		        	elements = new String[dataS.length-1];
+	   		        	for(int i=1; i<dataS.length; i++){
+	   		        		if(i==dataS.length-1){
+	   		        			Frame1.comboBox.addItem(dataS[i]);
+	   		        		}
+	   		        		elements[i-1]=dataS[i];
+	   		        		System.out.println( elements[i-1]);
+	   		        	}
+	   		        }
+	   		        f=1;
+					frame.dispose();
+				 }
+				 else {
+					 JLabel countLabel = new JLabel("¬ведите им€ системы!"); 
+		             JOptionPane.showMessageDialog(null, countLabel);
+				 }
 				 
 			 }
 			 

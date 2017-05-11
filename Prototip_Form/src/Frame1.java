@@ -76,6 +76,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Frame1 {
+	public static JComboBox<String> comboBox;
  
 	public static void main(String[] args) {
 
@@ -85,7 +86,7 @@ public class Frame1 {
 }
 	class Frame extends JFrame{
 
-		JComboBox comboBox;
+		
 		 private JFrame frame, frame1;
 		    private DefaultTableModel model,model1;
 		    private JButton  open, add, delete, pac, otchot, but, but1;
@@ -162,14 +163,14 @@ public class Frame1 {
 		            System.out.println( elements[i-1]);
 		         }
 	         }
-	         comboBox = new JComboBox(elements);
-	         comboBox.setBounds(149, 31, 200, 39); ///111
-	         comboBox.setAlignmentX(LEFT_ALIGNMENT);
-	         panel.add(comboBox,BorderLayout.CENTER);
+	         Frame1.comboBox = new JComboBox(elements);
+	         Frame1.comboBox.setBounds(149, 31, 200, 39); ///111
+	         Frame1.comboBox.setAlignmentX(LEFT_ALIGNMENT);
+	         panel.add(Frame1.comboBox,BorderLayout.CENTER);
 	         //comboBox.setEditable(true);
          
 	         comboBoxListener cbL = new comboBoxListener();
-	         comboBox.addActionListener(cbL);
+	         Frame1.comboBox.addActionListener(cbL);
          
 	         /*EditCBListener editCB = new EditCBListener();
 	         comboBox.addItemListener(editCB);*/
@@ -238,7 +239,7 @@ public class Frame1 {
 	class comboBoxListener implements ActionListener { 
 		public void actionPerformed(ActionEvent event) { 
 			int f1=0, f2=0;
-			String sysName = comboBox.getSelectedItem().toString();
+			String sysName = Frame1.comboBox.getSelectedItem().toString();
 			
 			ClientConfig config = new ClientConfig();
 			Client client = ClientBuilder.newClient(config);
@@ -392,7 +393,8 @@ public class Frame1 {
   				 AddBus oecu = new AddBus();
  			 }
              if (ev.getSource() == add) {
-   				 AddSyst oecu = new AddSyst();
+            	 AddSyst ns = new AddSyst();
+            	 
   			 }
 			 
 			 if (ev.getSource() == delete) {
@@ -431,9 +433,9 @@ public class Frame1 {
 					     JOptionPane.showMessageDialog(null, countLabel);   
 					 }
 				 }  
-				 else if (comboBox.getSelectedIndex()>=0){
+				 else if (Frame1.comboBox.getSelectedIndex()>=0){
 					 //int index = comboBox.getSelectedIndex();
-					 String sysName = comboBox.getSelectedItem().toString();				
+					 String sysName = Frame1.comboBox.getSelectedItem().toString();				
 					 ClientConfig config = new ClientConfig();
 				     Client client = ClientBuilder.newClient(config);
 				     System.out.println(sysName);
@@ -449,7 +451,7 @@ public class Frame1 {
 				    	 model1.removeRow(0);
 				     }				        
 			        
-				     comboBox.remove(comboBox.getSelectedIndex());//(index);
+				     Frame1.comboBox.remove(Frame1.comboBox.getSelectedIndex());//(index);
 				     JLabel countLabel = new JLabel(result); 
 				     JOptionPane.showMessageDialog(null, countLabel);   	 
 				 }

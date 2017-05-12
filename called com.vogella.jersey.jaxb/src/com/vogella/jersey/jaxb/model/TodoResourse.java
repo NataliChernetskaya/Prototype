@@ -80,13 +80,13 @@ public class TodoResourse {
 				return "Ошибка подключения к базе!";
 			}
         	if(nT.equals("bus")){
-        	try {
-				n_H2.addtoBUS(connection, n, ls, par_id);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "Ошибка! Проверьте корректность введенных данных!";
-			}
+	        	try {
+					n_H2.addtoBUS(connection, n, ls, par_id);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return "Ошибка! Проверьте корректность введенных данных!";
+				}
         	}
         	else if(nT.equals("frame")){
         		try {

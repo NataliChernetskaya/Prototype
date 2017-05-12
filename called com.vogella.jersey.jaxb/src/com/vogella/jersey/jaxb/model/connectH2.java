@@ -276,8 +276,7 @@ public class connectH2 {
 	        try (Statement statement = connection.createStatement()) {
 	            rs = statement.executeQuery("select task_id from task where core_id = "+coreId+";");
 	            while (rs.next()) {
-	            	System.out.println(rs.getInt("task_id") + " : " + rs.getString("nametask")+": " + rs.getString("type")+":"+rs.getInt("offsett")
-         		+":"+rs.getInt("lengtht")+":"+rs.getInt("period"));
+	            	//System.out.println(rs.getInt("task_id"));
          result=result+"-"+ rs.getInt("task_id");
 	            }
 	            System.out.println("----------------");

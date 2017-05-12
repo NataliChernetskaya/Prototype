@@ -53,6 +53,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 
 class Edit_cpu extends JFrame{	 
+	public static String ecuId = "", coreId = "", taskId = "";
 	JTextField  nam, cor, bus;
 	JComboBox comboBox, comboBox1, comboBox2;
 	JButton button1, button2, otchot, addcore, addtask, addframe, delete, deletetask, deleteframe, prosm,prosm1 ;
@@ -64,7 +65,7 @@ class Edit_cpu extends JFrame{
 	Object data[][],data1[][],data2[][];
 	private JScrollPane scroll,scroll1,scroll2;
 	private JTable books,books1,books2;
-	private DefaultTableModel model,model1,model2;
+	public static DefaultTableModel model,model1,model2;
 	String bu="", cores="";
 	
 	public Edit_cpu (String ecu_id,String name){
@@ -74,7 +75,7 @@ class Edit_cpu extends JFrame{
         //frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setVisible(true);
-        
+        ecuId = ecu_id;
 		
 		ScrollPane sc = new ScrollPane();
         //Создание кнопок и прикрепление иконок
@@ -86,8 +87,7 @@ class Edit_cpu extends JFrame{
         toolBar.add(otchot);
         frame.setLayout(new BorderLayout());
         frame.add(toolBar, BorderLayout.NORTH);
-        DDDD AD = new DDDD();
-        otchot.addActionListener(AD);
+        
          
         Box mainBox = Box.createVerticalBox();
         Box box1 = Box.createHorizontalBox();
@@ -165,7 +165,7 @@ class Edit_cpu extends JFrame{
         Box boxC = Box.createHorizontalBox();
 		bC = new JLabel("Task");
      	boxC.add(bC);
-     	headers1 = new Object[]{"№", "Name", "Type", "Offset", "Length", "Period","Frame"};
+     	headers1 = new Object[]{"№", "Name", "Type", "Offset", "Length", "Period"};
         Object[][] data1 = null;/*{
        	        { "1", "Task1", "","","","",""},
        	        { "2", "Task2", "","","","",""},
@@ -224,20 +224,21 @@ class Edit_cpu extends JFrame{
 		mainBoxC.add(mainBoxF);
 		
 		////////////////////////
+		DDDD AD = new DDDD();
+        otchot.addActionListener(AD);
 		addcore.addActionListener(AD);
 		addtask.addActionListener(AD);
 		addframe.addActionListener(AD);
+		delete.addActionListener(AD);
+		deletetask.addActionListener(AD);
+		deleteframe.addActionListener(AD);
 		///////////////////////
 		
 		EditTableListener editTableListener = new EditTableListener();
 		model.addTableModelListener(editTableListener);
 		model1.addTableModelListener(editTableListener);
 		model2.addTableModelListener(editTableListener);
-		
-		addcore.addActionListener(AD);
-		addtask.addActionListener(AD);
-		addframe.addActionListener(AD);
-		
+
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
@@ -270,6 +271,7 @@ class Edit_cpu extends JFrame{
 			int rowIndex = books.getSelectedRow();
 			if(rowIndex>=0){
 				core_id=(String) model.getValueAt(rowIndex, 0);
+				Edit_cpu.coreId = core_id;
 				core_name=(String) model.getValueAt(rowIndex, 1);
 				int f=0;
 				ClientConfig config = new ClientConfig();
@@ -320,6 +322,7 @@ class Edit_cpu extends JFrame{
 			if(rowIndex>=0){
 				task_id=(String) model1.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
 				task_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);
+				Edit_cpu.taskId = task_id;
 				//books1.getSelectionModel().clearSelection();
 				ClientConfig config = new ClientConfig();
 				Client client = ClientBuilder.newClient(config);
@@ -362,7 +365,6 @@ class Edit_cpu extends JFrame{
 					String core_id=(String) model.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
 					String core_name=(String) model.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);
 					//String bus_speed = (String) model.getValueAt(rowIndex,2);
-			
 					//books1.getSelectionModel().clearSelection();
 					ClientConfig config = new ClientConfig();
 					Client client = ClientBuilder.newClient(config);
@@ -384,7 +386,6 @@ class Edit_cpu extends JFrame{
 					String task_offset=(String) model1.getValueAt(rowIndex,3);
 					String task_length=(String) model1.getValueAt(rowIndex,4);
 					String task_period=(String) model1.getValueAt(rowIndex,5);
-			
 			
 					//books1.getSelectionModel().clearSelection();
 					ClientConfig config = new ClientConfig();
@@ -445,6 +446,10 @@ class Edit_cpu extends JFrame{
 						 JOptionPane.showMessageDialog(null, countLabel);   
 					 }
 				 } 
+				 else {
+					 JLabel countLabel = new JLabel("Не выбран элемент!"); 
+		             JOptionPane.showMessageDialog(null, countLabel);  
+				 }
 			 }
 			 if (ev.getSource() == deletetask) {
 				 if (books1.getSelectedRow() != -1){
@@ -467,26 +472,59 @@ class Edit_cpu extends JFrame{
 					     JOptionPane.showMessageDialog(null, countLabel);   
 					 }
 				 }
-				 if (ev.getSource() == deleteframe) { 
+				 else {
+					 JLabel countLabel = new JLabel("Не выбран элемент!"); 
+		             JOptionPane.showMessageDialog(null, countLabel);  
+				 }
+			 }
+			if (ev.getSource() == deleteframe) { 
 					 if (books2.getSelectedRow() != -1){
-					 String frame_id;
-					 int rowIndex = books2.getSelectedRow();
-					 if(rowIndex>=0){
-						 frame_id=(String) model2.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
-								//bus_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);
-						 //books1.getSelectionModel().clearSelection();
-						 ClientConfig config = new ClientConfig();
-					     Client client = ClientBuilder.newClient(config);
-					     WebTarget target = client.target(getBaseURI());
-					        
-					     model2.removeRow(rowIndex);		        				        
-					     String result = target.path("rest").path("delitem").path("frame").path(frame_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-					     JLabel countLabel = new JLabel(result); 
-					     JOptionPane.showMessageDialog(null, countLabel);   
+						 String frame_id;
+						 int rowIndex = books2.getSelectedRow();
+						 if(rowIndex>=0){
+							 frame_id=(String) model2.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
+									//bus_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);
+							 //books1.getSelectionModel().clearSelection();
+							 ClientConfig config = new ClientConfig();
+						     Client client = ClientBuilder.newClient(config);
+						     WebTarget target = client.target(getBaseURI());
+						        
+						     model2.removeRow(rowIndex);		        				        
+						     String result = target.path("rest").path("delitem").path("frame").path(frame_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						     JLabel countLabel = new JLabel(result); 
+						     JOptionPane.showMessageDialog(null, countLabel);   
+						 }
+					 }
+					 else {
+						 JLabel countLabel = new JLabel("Не выбран элемент!"); 
+			             JOptionPane.showMessageDialog(null, countLabel);  
 					 }
 				 }
+				 if (ev.getSource() == addcore) {
+					 if(Edit_cpu.ecuId.equals("")){
+						 JOptionPane.showMessageDialog(null, "Вы не выбрали блок управления!");
+					 }
+					 else{
+					 AddCore oop = new AddCore();
+					 }
+				 }
+				 if (ev.getSource() == addtask) {
+					 if(Edit_cpu.coreId.equals("")){
+						 JOptionPane.showMessageDialog(null, "Вы не выбрали процессор!");
+					 }
+					 else{
+	 				 
+					 AddTask ool = new AddTask();
+					 }
+				 }
+				 if (ev.getSource() == addframe) {
+					 if(Edit_cpu.taskId.equals("")){
+						 JOptionPane.showMessageDialog(null, "Вы не выбрали задачу!");
+					 }
+					 else{
+					 AddFrame oor = new AddFrame();
+					 }
 				 }
 			 }
 		}
-	}	
-}
+}	

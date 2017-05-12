@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -19,7 +20,13 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 
+import org.glassfish.jersey.client.ClientConfig;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
@@ -65,13 +72,60 @@ public class AddCore {
 	
 		frame.add(mainBox);
 		DDDD AD = new DDDD();
+		okcore.addActionListener(AD);
 	    notecore.addActionListener(AD);
 		
-	}
+		}
+
+		private URI getBaseURI() {
+			return UriBuilder.fromUri("http://localhost:8080/called_com.vogella.jersey.jaxb").build();
+		}
 	
 	class DDDD implements ActionListener {
 	
 		public void actionPerformed(ActionEvent ev){
+			
+			if (ev.getSource() == okcore) {
+				 
+				String coreName = nam.getText();
+				 if(coreName.trim().length()>0){
+					ClientConfig config = new ClientConfig();
+					Client client = ClientBuilder.newClient(config);
+					System.out.println(coreName);
+					WebTarget target = client.target(getBaseURI());
+
+
+					String Response = target.path("rest").path("add").path("core").path(coreName).path(Edit_cpu.ecuId).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					System.out.println(Response);
+					
+					while(Edit_cpu.model.getRowCount() > 0){
+						Edit_cpu.model.removeRow(0);
+					}
+					
+					String Response1 = target.path("rest").path("getinfo").path("core").path(Edit_cpu.ecuId).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					System.out.println(Response1);
+					String dataM [] = Response1.split("-");
+					System.out.println(dataM.length);
+					if(dataM.length>1){
+						for(int i =1; i<dataM.length;i++){
+							System.out.println(dataM[i]);
+						}
+						//data = new Object [dataM.length-1][3];
+			
+						for(int i = 1; i<dataM.length;i++){
+							//data[i-1] = dataM[i].split(":");
+							Edit_cpu.model.addRow(dataM[i].split(":"));
+						} 
+					frame.dispose();
+					}
+					 
+				 }
+				 else {
+					 JLabel countLabel = new JLabel("¬ведите им€ €дра!"); 
+		             JOptionPane.showMessageDialog(null, countLabel);
+				 }
+			 
+			}
 			if (ev.getSource() == notecore) {
 				 
 				 frame.dispose();

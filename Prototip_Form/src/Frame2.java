@@ -8,6 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -42,12 +43,20 @@ import javax.swing.ImageIcon;
 
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 import org.glassfish.jersey.client.ClientConfig;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.gantt.Task;
+import org.jfree.data.gantt.TaskSeries;
+import org.jfree.data.gantt.TaskSeriesCollection;
 
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.net.URI;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Logger;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
@@ -91,7 +100,8 @@ class Edit_cpu extends JFrame{
          
         Box mainBox = Box.createVerticalBox();
         Box box1 = Box.createHorizontalBox();
-		b = new JLabel(name);
+        mainBox.setBorder(new TitledBorder("Core"));
+		b = new JLabel("Core Parameters");
      	box1.add(b);
      	
 		headers = new Object[]{"№", "Core"};
@@ -163,7 +173,7 @@ class Edit_cpu extends JFrame{
 		Box mainBoxC1 = Box.createVerticalBox();
 		mainBoxC1.setBorder(new TitledBorder("Task"));
         Box boxC = Box.createHorizontalBox();
-		bC = new JLabel("Task");
+		bC = new JLabel("Task Parameters");
      	boxC.add(bC);
      	headers1 = new Object[]{"№", "Name", "Type", "Offset", "Length", "Period"};
         Object[][] data1 = null;/*{
@@ -197,7 +207,8 @@ class Edit_cpu extends JFrame{
 		
 		Box mainBoxF = Box.createVerticalBox();
         Box boxF = Box.createHorizontalBox();
-		bF = new JLabel("Frame parametr");
+        mainBoxF.setBorder(new TitledBorder("Frame"));
+		bF = new JLabel("Frame Parameters");
      	boxF.add(bF);
      	headers2 = new Object[]{"№", "Name", "Length"};
         Object[][] data2 = null;/*{
@@ -419,9 +430,68 @@ class Edit_cpu extends JFrame{
 			}
 		}
 	}
-	
 	class DDDD implements ActionListener {
-		public void actionPerformed(ActionEvent ev){
+	private Date date(int hour) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(2009, Calendar.DECEMBER, 1, hour, 0, 0);
+        return calendar.getTime();
+    }
+	public void actionPerformed(ActionEvent ev){
+		if (ev.getSource() == otchot) {
+				 String core_id;
+				 int rowIndex = books.getSelectedRow();
+				 if(rowIndex>=0){
+					 core_id=(String) model.getValueAt(rowIndex,0);	
+			ClientConfig config = new ClientConfig();
+	      	Client client = ClientBuilder.newClient(config);
+	      	
+	        WebTarget target = client.target(getBaseURI());
+	        String Response = "";
+	        try{
+	        	Response = target.path("rest").path("getinfo").path("task").path("1").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        }
+	        catch(ProcessingException e){
+	        	JLabel countLabel = new JLabel("Нет подключения к серверу!"); 
+				JOptionPane.showMessageDialog(null, countLabel);
+	        }
+	        System.out.println(Response);
+	        String taskName [] = Response.split("-");
+			
+	        Response = target.path("rest").path("getinfo").path("task").path("2").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        String nn [] =Response.split("-");
+	        Response = target.path("rest").path("getinfo").path("task").path("3").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        String nk [] = Response.split("-");
+		    Task[] t1;
+		    TaskSeries [] t2;
+			 /////////////////////////////////////////////////////////////////////////
+				 TaskSeriesCollection s1 = new TaskSeriesCollection();
+				 	t1=new Task [taskName.length-1];
+				 	t2=new TaskSeries [taskName.length-1];
+				 	
+				 	
+				 for (int k=1; k<taskName.length; k++)
+				 {
+					 System.out.println(k + "  "+taskName[k]+"\n");
+					 	//t2[k].setDescription(taskName[k]);
+					    t2[k-1] = new TaskSeries(taskName[k]);
+						t1[k-1] = new Task(taskName[k], date(1), date(24));
+						System.out.println(nn[k] +"  "+ nk[k]+"  "+Integer.parseInt(nn[k])+Integer.parseInt(nk[k]));
+						t1[k-1].addSubtask(new Task("Task", date(Integer.parseInt(nn[k])), date(Integer.parseInt(nn[k])+Integer.parseInt(nk[k]))));
+						t2[k-1].add(t1[k-1]);
+	
+				s1.add(t2[k-1]);
+				 }
+				 			 								
+					JFreeChart jchart = ChartFactory.createGanttChart("Diagram", (String) model.getValueAt(books.getSelectedRow(), 1), "Tasks", s1, true, true, true);
+					ChartFrame chartFrm = new ChartFrame("ModEAS diagram",jchart,true);
+					chartFrm.setVisible(true);;
+					chartFrm.setSize(800,500);
+					chartFrm.setLocation(300,100);
+					chartFrm.validate();
+	            }
+			 else
+			 {JOptionPane.showMessageDialog(frame, "Вы не выбрали CORE");}
+		 }
 			 if (ev.getSource() == delete) {    
 				 if (books.getSelectedRow() != -1){
 					 String core_id;
@@ -430,9 +500,9 @@ class Edit_cpu extends JFrame{
 						 core_id=(String) model.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
 						 //bus_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);
 						 //books1.getSelectionModel().clearSelection();
-						 ClientConfig config = new ClientConfig();
-						 Client client = ClientBuilder.newClient(config);
-						 WebTarget target = client.target(getBaseURI());
+						 ClientConfig config1 = new ClientConfig();
+						 Client client1 = ClientBuilder.newClient(config1);
+						 WebTarget target1 = client1.target(getBaseURI());
 					        
 						 model.removeRow(rowIndex);	
 						 while(model1.getRowCount() > 0){
@@ -441,7 +511,7 @@ class Edit_cpu extends JFrame{
 						 while(model2.getRowCount() > 0){
 							 model2.removeRow(0);
 						 }
-						 String result = target.path("rest").path("delitem").path("core").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						 String result = target1.path("rest").path("delitem").path("core").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 						 JLabel countLabel = new JLabel(result); 
 						 JOptionPane.showMessageDialog(null, countLabel);   
 					 }
@@ -459,15 +529,15 @@ class Edit_cpu extends JFrame{
 						 task_id=(String) model1.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
 								//bus_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);
 						 //books1.getSelectionModel().clearSelection();
-						 ClientConfig config = new ClientConfig();
-					     Client client = ClientBuilder.newClient(config);
-					     WebTarget target = client.target(getBaseURI());
+						 ClientConfig config1 = new ClientConfig();
+					     Client client1 = ClientBuilder.newClient(config1);
+					     WebTarget target1 = client1.target(getBaseURI());
 					        
 					     model1.removeRow(rowIndex);	
 					     while(model2.getRowCount() > 0){
 					    	 model2.removeRow(0);
 					     }
-					     String result = target.path("rest").path("delitem").path("task").path(task_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					     String result = target1.path("rest").path("delitem").path("task").path(task_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 					     JLabel countLabel = new JLabel(result); 
 					     JOptionPane.showMessageDialog(null, countLabel);   
 					 }
@@ -485,12 +555,12 @@ class Edit_cpu extends JFrame{
 							 frame_id=(String) model2.getValueAt(rowIndex,0);//(books1.getSelectedRow(), 0);
 									//bus_name=(String) model1.getValueAt(rowIndex,1);//(books1.getSelectedRow(), 1);
 							 //books1.getSelectionModel().clearSelection();
-							 ClientConfig config = new ClientConfig();
-						     Client client = ClientBuilder.newClient(config);
-						     WebTarget target = client.target(getBaseURI());
+							 ClientConfig config1 = new ClientConfig();
+						     Client client1 = ClientBuilder.newClient(config1);
+						     WebTarget target1 = client1.target(getBaseURI());
 						        
 						     model2.removeRow(rowIndex);		        				        
-						     String result = target.path("rest").path("delitem").path("frame").path(frame_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						     String result = target1.path("rest").path("delitem").path("frame").path(frame_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 						     JLabel countLabel = new JLabel(result); 
 						     JOptionPane.showMessageDialog(null, countLabel);   
 						 }
@@ -527,4 +597,4 @@ class Edit_cpu extends JFrame{
 				 }
 			 }
 		}
-}	
+}

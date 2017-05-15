@@ -146,7 +146,7 @@ public class Frame1 {
         
 	        otchot=new JButton("Отчёт");
 	        otchot.setToolTipText("Графики");
-	        toolBar.add(otchot);
+	       // toolBar.add(otchot);
 	        frame.setLayout(new BorderLayout());
 	        frame.add(toolBar, BorderLayout.NORTH);
 	        
@@ -189,8 +189,9 @@ public class Frame1 {
 	         comboBox.addItemListener(editCB);*/
           
 	         Box mainBox = Box.createVerticalBox();
+	         mainBox.setBorder(new TitledBorder("BUS"));
 	         Box box1 = Box.createHorizontalBox();
-	 		 b = new JLabel("BUS Parameter");
+	 		 b = new JLabel("BUS Parameters");
 	      	 box1.add(b);
 	 		 headers = new Object[]{"№", "Name", "Speed"};
 	         Object[][] data = null;
@@ -215,8 +216,9 @@ public class Frame1 {
 			 books.setCellSelectionEnabled(false);
 
 			 Box mainBox1 = Box.createVerticalBox();
+			 mainBox1.setBorder(new TitledBorder("ECU"));
 	         Box box3 = Box.createHorizontalBox();
-	 		 b1 = new JLabel("ECU Parameter");
+	 		 b1 = new JLabel("ECU Parameters");
 	      	 box3.add(b1);
 	         headers1 = new Object[]{"№", "Name"};
 	         Object[][] data1 = null;

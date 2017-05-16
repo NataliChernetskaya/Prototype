@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -55,7 +56,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 
 public class Login extends JFrame{
-
+	public static String userIndex = "";
 	 
 	 JTextField  num, num1;
 	 JComboBox comboBox, comboBox1, comboBox2;
@@ -107,13 +108,30 @@ public class Login extends JFrame{
         frame.setVisible(true);
 		}
 		
+		private URI getBaseURI() {
+			return UriBuilder.fromUri("http://localhost:8080/called_com.vogella.jersey.jaxb").build();
+	    }
+		
 		class DDDD implements ActionListener {
 			public void actionPerformed(ActionEvent ev){
 				 String n = num.getText();
 				 String n1 = num1.getText();
 				 if (ev.getSource() == button1) {
+					 ClientConfig config = new ClientConfig();
+				     Client client = ClientBuilder.newClient(config);
+				      	
+				     WebTarget target = client.target(getBaseURI());
+				     String Response = "";
+					 try{
+				        	Response = target.path("rest").path("getinfo").path(n).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+				        }
+				        catch(ProcessingException e){
+				        	JLabel countLabel = new JLabel("Нет подключения к серверу!"); 
+							JOptionPane.showMessageDialog(null, countLabel);
+				        }
 
-		                if ( n.equals("log") && n1.equals("pas")) {
+		                if (n1.equals(Response)) {
+		                	userIndex = target.path("rest").path("getinfo").path("login").path("1").path(n).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
 		                	Frame window = new Frame();
 		                	frame.setVisible(false);
 		                } else {

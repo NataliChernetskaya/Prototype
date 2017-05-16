@@ -20,6 +20,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -118,74 +119,83 @@ public class AddTask {
 		okcore.addActionListener(AD);
 	    notcore.addActionListener(AD);
 		
-		}
+	}
 
-		private URI getBaseURI() {
-			return UriBuilder.fromUri("http://localhost:8080/called_com.vogella.jersey.jaxb").build();
-		}
+	private URI getBaseURI() {
+		return UriBuilder.fromUri("http://localhost:8080/called_com.vogella.jersey.jaxb").build();
+	}
 
-		class DDDD implements ActionListener {
+	class DDDD implements ActionListener {
 
-			public void actionPerformed(ActionEvent ev){
-				if (ev.getSource() == okcore) {
-					String taskName = nam.getText();
-					String t = type.getText();
-					String offset = offs.getText();
-					String l = leng.getText();
-					String period = per.getText();
-					 if(taskName.trim().length()>0 && t.trim().length()>0 && offset.trim().length()>0 && l.trim().length()>0 && period.trim().length()>0){
-						ClientConfig config = new ClientConfig();
-						Client client = ClientBuilder.newClient(config);
-						System.out.println(taskName);
-						WebTarget target = client.target(getBaseURI());
-
-
-						String Response = ""; 
-						try{
-							Response = target.path("rest").path("add").path(taskName).path(t).path(offset).path(l).path(period).path(Edit_cpu.coreId).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+		public void actionPerformed(ActionEvent ev){
+			if (ev.getSource() == okcore) {
+				int f=0;
+				String taskName = nam.getText();
+				String t = type.getText();
+				String offset = offs.getText();
+				String l = leng.getText();
+				String period = per.getText();
+				if(taskName.trim().length()>0 && t.trim().length()>0 && offset.trim().length()>0 && l.trim().length()>0 && period.trim().length()>0){
+					ClientConfig config = new ClientConfig();
+					Client client = ClientBuilder.newClient(config);
+					System.out.println(taskName);
+					WebTarget target = client.target(getBaseURI());
+					String Response = ""; 
+					try{
+						Response = target.path("rest").path("add").path(taskName).path(t).path(offset).path(l).path(period).path(Edit_cpu.coreId).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						f=1;
+					}
+					catch(NotFoundException e){
+						JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
+						JOptionPane.showMessageDialog(null, countLabel);
+					}
+					System.out.println(Response);
+					if(Response.equals("Ошибка!")){
+						f=0;
+						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel);
+					}
+					while(Edit_cpu.model1.getRowCount() > 0){
+						Edit_cpu.model1.removeRow(0);
+					}
+					String Response1 = "";
+					try{
+						Response1 = target.path("rest").path("getinfo").path("task").path(Edit_cpu.coreId).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					}
+					catch(ProcessingException e){
+						JLabel countLabel = new JLabel("Нет подключения к серверу!"); 
+						JOptionPane.showMessageDialog(null, countLabel);
+					}
+					System.out.println(Response1);
+					String dataM [] = Response1.split("-");
+					System.out.println(dataM.length);
+					if(dataM.length>1){
+						for(int i =1; i<dataM.length;i++){
+							System.out.println(dataM[i]);
 						}
-						
-						catch(ProcessingException e){
-				        	JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
-							JOptionPane.showMessageDialog(null, countLabel);
-				        }
-						System.out.println(Response);
-						
-						while(Edit_cpu.model1.getRowCount() > 0){
-							Edit_cpu.model1.removeRow(0);
-						}
-						
-						String Response1 = target.path("rest").path("getinfo").path("task").path(Edit_cpu.coreId).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-						System.out.println(Response1);
-						String dataM [] = Response1.split("-");
-						System.out.println(dataM.length);
-						if(dataM.length>1){
-							for(int i =1; i<dataM.length;i++){
-								System.out.println(dataM[i]);
-							}
-							//data = new Object [dataM.length-1][3];
+						//data = new Object [dataM.length-1][3];
 				
-							for(int i = 1; i<dataM.length;i++){
-								//data[i-1] = dataM[i].split(":");
-								Edit_cpu.model1.addRow(dataM[i].split(":"));
-							} 
+						for(int i = 1; i<dataM.length;i++){
+							//data[i-1] = dataM[i].split(":");
+							Edit_cpu.model1.addRow(dataM[i].split(":"));
+						} 
+						
+					}
+					if(f==1)
 						frame.dispose();
-						}
 						 
-					 }
-					 else {
-						 JLabel countLabel = new JLabel("Не все поля заполнены!"); 
-			             JOptionPane.showMessageDialog(null, countLabel);
-					 }
-				 
 				}
+				else {
+					JLabel countLabel = new JLabel("Не все поля заполнены!"); 
+					JOptionPane.showMessageDialog(null, countLabel);
+				}
+				 
+			}
 			if (ev.getSource() == notcore) {
 				 
-				 frame.dispose();
+				frame.dispose();
 				 
-			 }
-		
-			 
+			}
 		}
 	}	
 }

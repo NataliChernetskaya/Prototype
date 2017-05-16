@@ -8,6 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -381,10 +382,22 @@ class Edit_cpu extends JFrame{
 					Client client = ClientBuilder.newClient(config);
 					WebTarget target = client.target(getBaseURI());
 		        
-		        	//model.removeRow(rowIndex);		        				        
-					String result = target.path("rest").path("edit").path("core").path(core_name).path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-					JLabel countLabel = new JLabel(result); 
-					JOptionPane.showMessageDialog(null, countLabel);   
+		        	//model.removeRow(rowIndex);
+					String result ="";
+					try{
+						result = target.path("rest").path("edit").path("core").path(core_name).path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					}
+					catch(NotFoundException e){
+			        	JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
+						JOptionPane.showMessageDialog(null, countLabel);
+			        }
+					//JLabel countLabel = new JLabel(result); 
+					//JOptionPane.showMessageDialog(null, countLabel);   
+					if(result.equals("ERROR")){
+						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel);
+			           
+					}
 				}	
 			}
 			
@@ -403,10 +416,22 @@ class Edit_cpu extends JFrame{
 					Client client = ClientBuilder.newClient(config);
 					WebTarget target = client.target(getBaseURI());
 		        
-		        	//model1.removeRow(rowIndex);		        				        
-					String result = target.path("rest").path("edit").path(task_name).path(task_type).path(task_offset).path(task_length).path(task_period).path(task_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-					JLabel countLabel = new JLabel(result); 
-					JOptionPane.showMessageDialog(null, countLabel);   
+		        	//model1.removeRow(rowIndex);	
+					String result ="";
+					try{
+							result = target.path("rest").path("edit").path(task_name).path(task_type).path(task_offset).path(task_length).path(task_period).path(task_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					}
+					catch(NotFoundException e){
+			        	JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
+						JOptionPane.showMessageDialog(null, countLabel);
+			        }
+					//JLabel countLabel = new JLabel(result); 
+					//JOptionPane.showMessageDialog(null, countLabel);   
+					if(result.equals("ERROR")){
+						JLabel countLabel1 = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel1);
+			           
+					}
 				}
 			}
 			
@@ -422,10 +447,22 @@ class Edit_cpu extends JFrame{
 					Client client = ClientBuilder.newClient(config);
 					WebTarget target = client.target(getBaseURI());
 		        
-		        	//model1.removeRow(rowIndex);		        				        
-					String result = target.path("rest").path("edit").path("frame").path(frame_name).path(frame_length).path(frame_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
-					JLabel countLabel = new JLabel(result); 
-					JOptionPane.showMessageDialog(null, countLabel);   
+		        	//model1.removeRow(rowIndex);	
+					String result ="";
+					try{
+						result = target.path("rest").path("edit").path("frame").path(frame_name).path(frame_length).path(frame_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					}
+					catch(NotFoundException e){
+			        	JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
+						JOptionPane.showMessageDialog(null, countLabel);
+			        }
+					//JLabel countLabel = new JLabel(result); 
+					//JOptionPane.showMessageDialog(null, countLabel);   
+					if(result.equals("ERROR")){
+						JLabel countLabel1 = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel1);
+			           
+					}
 				}
 			}
 		}

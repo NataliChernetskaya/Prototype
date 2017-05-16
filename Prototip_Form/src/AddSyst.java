@@ -21,6 +21,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -44,7 +45,7 @@ public class AddSyst {
 	JFrame frame;
 	JButton okcore, notcore;
 	String cbItem = null;
-	int f=0;
+	
 	   
 	public AddSyst(){
 		
@@ -102,6 +103,7 @@ public class AddSyst {
 				 
 			 }
 			 if (ev.getSource() == okcore) {
+				 int f=0;
 				 String sysName = nam.getText();
 				 if(sysName.trim().length()>0){
 					ClientConfig config = new ClientConfig();
@@ -111,9 +113,21 @@ public class AddSyst {
 					
 					
 					///////////////////////////////////////////////USER ID 
-					String Response = target.path("rest").path("add").path(sysName).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					String Response = "";
+					try{
+						Response = target.path("rest").path("add").path(sysName).path(Login.userIndex).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						f=1;
+					}catch(NotFoundException e){
+						JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
+						JOptionPane.showMessageDialog(null, countLabel);
+					}
+					if(Response.equals("Ошибка!")){
+						f=0;
+						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel);
+					}
 					System.out.println(Response);
-					Response = target.path("rest").path("getinfo").path("system").path("1").path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					Response = target.path("rest").path("getinfo").path("system").path("1").path("1").path(Login.userIndex).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 	   		        System.out.println(Response);
 	   		        String dataS [] = Response.split("-");
 	   		        String[] elements = null;
@@ -127,8 +141,8 @@ public class AddSyst {
 	   		        		System.out.println( elements[i-1]);
 	   		        	}
 	   		        }
-	   		        f=1;
-					frame.dispose();
+	   		        if(f==1)
+	   		        	frame.dispose();
 				 }
 				 else {
 					 JLabel countLabel = new JLabel("Введите имя системы!"); 

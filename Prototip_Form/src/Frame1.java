@@ -8,6 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -157,7 +158,7 @@ public class Frame1 {
 	        WebTarget target = client.target(getBaseURI());
 	        String Response = "";
 	        try{
-	        	Response = target.path("rest").path("getinfo").path("system").path("1").path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        	Response = target.path("rest").path("getinfo").path("system").path("1").path("1").path(Login.userIndex).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 	        }
 	        catch(ProcessingException e){
 	        	JLabel countLabel = new JLabel("Нет подключения к серверу!"); 
@@ -168,7 +169,7 @@ public class Frame1 {
          
 	         JPanel panel = new JPanel();
 	         frame.add(panel, BorderLayout.CENTER);
-	         String[] elements = null;
+	         String[] elements = {};
 	         if(dataS.length>1){
 	        	 elements = new String[dataS.length-1];
 		         for(int i=1; i<dataS.length; i++){
@@ -274,7 +275,7 @@ public class Frame1 {
 				WebTarget target = client.target(getBaseURI());
 				String Response = "";
 				try{
-					Response = target.path("rest").path("getinfo").path("system").path("0").path(sysName).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					Response = target.path("rest").path("getinfo").path("system").path("0").path(sysName).path("0").request().accept(MediaType.TEXT_PLAIN).get(String.class);
 				}
 				catch(ProcessingException e){
 			        	JLabel countLabel = new JLabel("Возникли проблемы!"); 
@@ -397,13 +398,19 @@ public class Frame1 {
 					WebTarget target = client.target(getBaseURI());
 		        
 		        	//model.removeRow(rowIndex);
+					String result ="";
 					try{
-						String result = target.path("rest").path("edit").path("bus").path(bus_name).path(bus_speed).path(bus_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						result = target.path("rest").path("edit").path("bus").path(bus_name).path(bus_speed).path(bus_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 					}
-					catch(ProcessingException e){
+					catch(NotFoundException e){
 			        	JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
 						JOptionPane.showMessageDialog(null, countLabel);
 			        }
+					if(result.equals("ERROR")){
+						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel);
+			           
+					}
 					//JLabel countLabel = new JLabel(result); 
 					//JOptionPane.showMessageDialog(null, countLabel);   
 				}
@@ -420,13 +427,19 @@ public class Frame1 {
 					WebTarget target = client.target(getBaseURI());
 		        
 		        	//model1.removeRow(rowIndex);	
+					String result = "";
 					try{
-						String result = target.path("rest").path("edit").path("ecu").path(ecu_name).path(ecu_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						result = target.path("rest").path("edit").path("ecu").path(ecu_name).path(ecu_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 					}
-					catch(ProcessingException e){
+					catch(NotFoundException e){
 			        	JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
 						JOptionPane.showMessageDialog(null, countLabel);
 			        }
+					if(result.equals("ERROR")){
+						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel);
+			           
+					}
 					//JLabel countLabel = new JLabel(result); 
 					//JOptionPane.showMessageDialog(null, countLabel);   
 				}
@@ -542,7 +555,7 @@ public class Frame1 {
 					     Client client = ClientBuilder.newClient(config);
 					     System.out.println(sysName);
 					     WebTarget target = client.target(getBaseURI());
-					     String Response = target.path("rest").path("getinfo").path("system").path("0").path(sysName).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					     String Response = target.path("rest").path("getinfo").path("system").path("0").path("0").path(sysName).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 					     System.out.println(Response);
 					     String result = target.path("rest").path("delitem").path("system").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 					     System.out.println(result);

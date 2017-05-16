@@ -20,6 +20,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -86,7 +87,7 @@ public class AddCore {
 		public void actionPerformed(ActionEvent ev){
 			
 			if (ev.getSource() == okcore) {
-				 
+				 int f=0;
 				String coreName = nam.getText();
 				 if(coreName.trim().length()>0){
 					ClientConfig config = new ClientConfig();
@@ -94,8 +95,20 @@ public class AddCore {
 					System.out.println(coreName);
 					WebTarget target = client.target(getBaseURI());
 
-
-					String Response = target.path("rest").path("add").path("core").path(coreName).path(Edit_cpu.ecuId).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					String Response = ""; 
+					try{
+						Response = target.path("rest").path("add").path("core").path(coreName).path(Edit_cpu.ecuId).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						f=1;
+					}
+					catch(NotFoundException e){
+						JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
+						JOptionPane.showMessageDialog(null, countLabel);
+					}
+					if(Response.equals("Ошибка!")){
+						f=0;
+						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel);
+					}
 					System.out.println(Response);
 					
 					while(Edit_cpu.model.getRowCount() > 0){
@@ -116,8 +129,10 @@ public class AddCore {
 							//data[i-1] = dataM[i].split(":");
 							Edit_cpu.model.addRow(dataM[i].split(":"));
 						} 
-					frame.dispose();
+					
 					}
+					if(f==1)
+						frame.dispose();
 					 
 				 }
 				 else {

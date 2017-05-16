@@ -20,6 +20,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -85,7 +86,7 @@ public class AddEcu {
 	
 		public void actionPerformed(ActionEvent ev){
 			if (ev.getSource() == okcore) {
-				 
+				 int f=0;
 				String ecuName = nam.getText();
 				 if(ecuName.trim().length()>0){
 					ClientConfig config = new ClientConfig();
@@ -95,7 +96,20 @@ public class AddEcu {
 					
 					
 					///////////////////////////////////////////////USER ID 
-					String Response = target.path("rest").path("add").path("ecu").path(ecuName).path(Frame1.systemIndex).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					String Response = ""; 
+					try{
+						Response = target.path("rest").path("add").path("ecu").path(ecuName).path(Frame1.systemIndex).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+						f=1;
+					}
+					catch(NotFoundException e){
+						JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
+						JOptionPane.showMessageDialog(null, countLabel);
+					}
+					if(Response.equals("Ошибка!")){
+						f=0;
+						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
+			            JOptionPane.showMessageDialog(null, countLabel);
+					}
 					System.out.println(Response);
 					
 					while(Frame1.model1.getRowCount() > 0){
@@ -116,9 +130,10 @@ public class AddEcu {
 							//data[i-1] = dataM[i].split(":");
 							Frame1.model1.addRow(dataM[i].split(":"));
 						} 
-					frame.dispose();
+						
 					}
-					 
+					if(f==1)
+						frame.dispose();
 				 }
 				 else {
 					 JLabel countLabel = new JLabel("Введите имя системы!"); 

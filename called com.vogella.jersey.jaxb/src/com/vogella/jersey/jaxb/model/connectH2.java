@@ -3,6 +3,8 @@ package com.vogella.jersey.jaxb.model;
 import java.sql.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.h2.jdbc.JdbcSQLException;
+
 @XmlRootElement
 public class connectH2 {
 	 public connectH2() throws ClassNotFoundException {
@@ -74,43 +76,57 @@ public class connectH2 {
 	 
 	 //----------------------------------------------------------------------------
 	 //-------------Edit Item---------------------------------------------------
-	 public void editBUS(Connection connection, String nname, int speedb, int busId) throws SQLException {
+	 public String editBUS(Connection connection, String nname, int speedb, int busId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
-	        	statement.execute("update BUS set namebus = '"+nname+"', speedb = "+speedb+" where bus_id = "+busId);
+	        	try{
+	        		statement.execute("update BUS set namebus = '"+nname+"', speedb = "+speedb+" where bus_id = "+busId);
+	        	}
+	        	catch(JdbcSQLException e){return "ERROR";}
 	        }
+	        return "OK";
 	    }
-	 public void editCORE(Connection connection, String nname, int coreId) throws SQLException {
+	 public String editCORE(Connection connection, String nname, int coreId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
-	        	statement.execute("update core set namecore ='"+nname+"'  where core_id = "+coreId);
+	        	try{
+	        		statement.execute("update core set namecore ='"+nname+"'  where core_id = "+coreId);
+	        	}
+	        	catch(JdbcSQLException e){return "ERROR";}
 	        }
+	        return "OK";
 	    }
-	 public void editECU(Connection connection, String nname,  int ecuId) throws SQLException {
+	 public String editECU(Connection connection, String nname,  int ecuId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
-	        	statement.execute("update ecu set nameecu = '"+nname+"'  where ecu_id = "+ecuId);
+	        	try{
+	        		statement.execute("update ecu set nameecu = '"+nname+"'  where ecu_id = "+ecuId);
+	        	}catch(JdbcSQLException e){return "ERROR";}
 	        }
+	        return "OK";
 	    }
-	 public void editFRAME(Connection connection, String nname, int lengthf,  int frameId) throws SQLException {
+	 public String editFRAME(Connection connection, String nname, int lengthf,  int frameId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
-	        	statement.execute("update frame set nameframe = '"+nname+"', lengthf = "+lengthf+""
+	        	try{
+	        		statement.execute("update frame set nameframe = '"+nname+"', lengthf = "+lengthf+""
 	        			+ "   where frame_id = "+frameId);
+	        	}catch(JdbcSQLException e){return "ERROR";}
 	        }
+	        return "OK";
 	    }
-	 public void editSYSTEM(Connection connection, String nname, int sysId) throws SQLException {
+	 public String editSYSTEM(Connection connection, String nname, int sysId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
-	        	statement.execute("update system set namesys ='"+nname+"' where sys_id = "+sysId);
+	        	try{
+	        		statement.execute("update system set namesys ='"+nname+"' where sys_id = "+sysId);
+	        	}catch(JdbcSQLException e){return "ERROR";}
 	        }
+	        return "OK";
 	    }
-	 public void editTASK(Connection connection, String nname, String type, int offsett, int lengtht, int period,  int taskId) throws SQLException {
+	 public String editTASK(Connection connection, String nname, String type, int offsett, int lengtht, int period,  int taskId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
+	        	try{
 	        	statement.execute("update task set nametask = '"+nname+"', type = '"+type+"', offsett ="+offsett+" , lengtht = "+lengtht+", "
 	        			+ "period = "+period+" where task_id = "+taskId);
+	        	}catch(JdbcSQLException e){return "ERROR"; }
 	        }
+	        return "OK";
 	    }
 	 //--------------------------------------------------------------------------
 	 
@@ -213,13 +229,13 @@ public class connectH2 {
 	        }
 	        return result;
   }
-	 public String getSYSTEMNAME(Connection connection) throws SQLException {
+	 public String getSYSTEMNAME(Connection connection, int userId) throws SQLException {
 	 		String result = "0";
 	ResultSet rs;
 	        try (Statement statement = connection.createStatement()) {
-	            rs = statement.executeQuery("select * from system;");
+	            rs = statement.executeQuery("select namesys from system where user_id =" +userId);
 	            while (rs.next()) {
-	                System.out.println(rs.getInt("sys_id") + " : " + rs.getString("namesys"));
+	                System.out.println(rs.getString("namesys")+" : " );
 	                result=result+"-"+rs.getString("namesys");
 
 	            }
@@ -235,6 +251,34 @@ public class connectH2 {
 	            while (rs.next()) {
 	                System.out.println(rs.getInt("sys_id") );
 	                result=Integer.toString(rs.getInt("sys_id"));
+
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
+	 public String getLOGPAS(Connection connection, String login) throws SQLException {
+	 		String result = "0";
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select password from users where login = '"+login+"'");
+	            while (rs.next()) {
+	                System.out.println(rs.getString("password") );
+	                result=rs.getString("password");
+
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
+	 public String getUSERID(Connection connection, String login) throws SQLException {
+	 		String result = "0";
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select user_id from users where login = '"+login+"'");
+	            while (rs.next()) {
+	                System.out.println(rs.getInt("user_id") );
+	                result=Integer.toString(rs.getInt("user_id"));
 
 	            }
 	            System.out.println("----------------");
@@ -264,7 +308,7 @@ public class connectH2 {
 	            while (rs.next()) {
 	            	System.out.println(rs.getInt("task_id") + " : " + rs.getString("nametask")+": " + rs.getString("type")+":"+rs.getInt("offsett")
             		+":"+rs.getInt("lengtht")+":"+rs.getInt("period"));
-            result=result+"-"+ rs.getInt("task_id") + ":"+rs.getString("nametask");
+            result=result+"-"+rs.getString("nametask");
 	            }
 	            System.out.println("----------------");
 	        }
@@ -278,6 +322,32 @@ public class connectH2 {
 	            while (rs.next()) {
 	            	//System.out.println(rs.getInt("task_id"));
          result=result+"-"+ rs.getInt("task_id");
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
+	 public String getTASKOFFSET(Connection connection,  int coreId) throws SQLException {
+	 		String result = "0";
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select offsett from task where core_id = "+coreId+";");
+	            while (rs.next()) {
+	            	//System.out.println(rs.getInt("task_id"));
+      result=result+"-"+ rs.getInt("offsett");
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
+	 public String getTASKLENGTH(Connection connection,  int coreId) throws SQLException {
+	 		String result = "0";
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select lengtht from task where core_id = "+coreId+";");
+	            while (rs.next()) {
+	            	//System.out.println(rs.getInt("task_id"));
+      result=result+"-"+ rs.getInt("lengtht");
 	            }
 	            System.out.println("----------------");
 	        }

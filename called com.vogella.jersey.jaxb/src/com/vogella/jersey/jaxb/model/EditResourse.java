@@ -19,7 +19,7 @@ public class EditResourse {
     public String getHTML(@PathParam("nameT") String nT, @PathParam("name") String n, @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
     	connectH2 n_H2 = new connectH2();
     	Connection connection = null;
-    	String result = null;
+    	String result = "";
     	try {
 			connection = n_H2.getConnection();
 		} catch (SQLException e) {
@@ -29,24 +29,24 @@ public class EditResourse {
 		}
     	if(nT.equals("core")){
     	try {
-			n_H2.editCORE(connection, n, id);
+    		result=n_H2.editCORE(connection, n, id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return "Ошибка! Проверьте корректность введенных данных!";
+			return "Ошибка!";
 		}
     	}
     	else if(nT.equals("ecu")){
     		try {
-				n_H2.editECU(connection, n, id);
+    			result=n_H2.editECU(connection, n, id);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return "Ошибка! Проверьте корректность введенных данных!";
+				return "Ошибка!";
 			}
     	}
            
-            return "Элемент изменен!";
+            return result;
     }
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -54,7 +54,7 @@ public class EditResourse {
     public String getHTML(@PathParam("nameT") String nT, @PathParam("name") String n, @PathParam("lenorspeed") int ls,  @PathParam("itemId") int id) throws ClassNotFoundException, SQLException {
     	connectH2 n_H2 = new connectH2();
     	Connection connection = null;
-    	String result = null;
+    	String result ="";
     	try {
 			connection = n_H2.getConnection();
 		} catch (SQLException e) {
@@ -64,24 +64,24 @@ public class EditResourse {
 		}
     	if(nT.equals("bus")){
     	try {
-			n_H2.editBUS(connection, n, ls, id);
+    		result=n_H2.editBUS(connection, n, ls, id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return "Ошибка! Проверьте корректность введенных данных!";
+			return "Ошибка!";
 		}
     	}
     	else if(nT.equals("frame")){
     		try {
-				n_H2.editFRAME(connection, n,ls, id);
+    			result=	n_H2.editFRAME(connection, n,ls, id);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return "Ошибка! Проверьте корректность введенных данных!";
+				return "Ошибка!";
 			}
     	}
            
-	      return "Элемент изменен!";
+	      return result;
     }
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -90,7 +90,7 @@ public class EditResourse {
     	String id=null;
     	connectH2 n_H2 = new connectH2();
     	Connection connection = null;
-    	String result = null;
+    	String result = "";
     	try {
 			connection = n_H2.getConnection();
 		} catch (SQLException e) {
@@ -104,19 +104,19 @@ public class EditResourse {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return "Ошибка! Проверьте корректность введенных данных!";
+			return "Ошибка!";
 		}  	  
     	System.out.println("id = " + id);
     	
     	try {
-			n_H2.editSYSTEM(connection, n, Integer.parseInt(id));
+    		result=n_H2.editSYSTEM(connection, n, Integer.parseInt(id));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return "Ошибка! Проверьте корректность введенных данных!";
+			return "Ошибка!";
 		}  	     		
            
-	      return "Элемент изменен!";
+	      return result;
     }
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -134,14 +134,14 @@ public class EditResourse {
 		}
     	
     	try {
-			n_H2.editTASK(connection, n,t,of,l,p, id);
+    		result=n_H2.editTASK(connection, n,t,of,l,p, id);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return "Ошибка! Проверьте корректность введенных данных!";
+			return "Ошибка!";
 		}
     	
-    	return "Элемент изменен!";
+    	return result;
     }
 
 }

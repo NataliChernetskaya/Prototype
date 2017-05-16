@@ -33,7 +33,7 @@ public class TodoResourse {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return "Ошибка! Проверьте корректность введенных данных!";
+				return "Ошибка!";
 			}
         	}
         	else if(nT.equals("ecu")){
@@ -42,7 +42,7 @@ public class TodoResourse {
     			} catch (SQLException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
-    				return "Ошибка! Проверьте корректность введенных данных!";
+    				return "Ошибка!";
     			}
         	}
         	ResultSet rs;
@@ -85,7 +85,7 @@ public class TodoResourse {
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					return "Ошибка! Проверьте корректность введенных данных!";
+					return "Ошибка!";
 				}
         	}
         	else if(nT.equals("frame")){
@@ -94,7 +94,7 @@ public class TodoResourse {
     			} catch (SQLException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
-    				return "Ошибка! Проверьте корректность введенных данных!";
+    				return "Ошибка!";
     			}
         	}
         	ResultSet rs;
@@ -137,7 +137,7 @@ public class TodoResourse {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return "Ошибка! Проверьте корректность введенных данных!";
+				return "Ошибка!";
 			}  	     		
         	 ResultSet rs;
     	      try (Statement statement = connection.createStatement()) {
@@ -170,7 +170,7 @@ public class TodoResourse {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return "Ошибка! Проверьте корректность введенных данных!";
+				return "Ошибка!";
 			}
         	
         	 ResultSet rs;

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -57,12 +58,19 @@ public class GetInformation {
 			return error;
 		}
     	switch (nT){
-		case "system": if(op ==1) result = n_H2.getSYSTEMNAME(connection, uID);
+		case "system": if(op ==1)try{
+			result = n_H2.getSYSTEMNAME(connection, uID);}
+			catch(NotFoundException e){
+				return "Нет элементов!";
+			}
+
 						else result = n_H2.getSYSTEMID(connection, nS);
 		break;
 		case "task":if(op ==1) result = n_H2.getTASKNAME(connection, Integer.parseInt(nS));
 					else if(op ==2 ) result = n_H2.getTASKOFFSET(connection, Integer.parseInt(nS));
-					else  result = n_H2.getTASKLENGTH(connection, Integer.parseInt(nS));
+					else if(op ==3 ) result = n_H2.getTASKLENGTH(connection, Integer.parseInt(nS));
+					else if(op ==4 ) result = n_H2.getTASKTYPE(connection, Integer.parseInt(nS));
+					else if(op ==5 ) result = n_H2.getTASKPERIOD(connection, Integer.parseInt(nS));
     	break;
 		case "login": result = n_H2.getUSERID(connection, nS);
 		break;

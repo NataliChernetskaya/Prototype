@@ -14,44 +14,76 @@ public class connectH2 {
 	        return DriverManager.getConnection("jdbc:h2:~/testdb","sa","");
 	    }
 	 //-------------Add to Table----------------------------------------------------- 
-	 public void addtoBUS(Connection connection, String nname, int speedb, int sysId) throws SQLException {
+	 public String addtoUSERS(Connection connection, String login, String pass) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
+	        try{	
+	        	statement.execute("insert into USERS(login, password) values('"+login+"','"+pass+"');");
+	            //statement.execute("insert into user(name) values(nname)");
+	        }
+        	catch(JdbcSQLException e){return "ERROR";}
+        }
+        return "OK";
+}
+
+	 public String addtoBUS(Connection connection, String nname, int speedb, int sysId) throws SQLException {
+	        try (Statement statement = connection.createStatement()) {
+	        	try{
 	        	statement.execute("insert into BUS(namebus, speedb, sys_id) values('"+nname+"',"+speedb+", "+sysId+")");
 	            //statement.execute("insert into user(name) values(nname)");
 	        }
-	    }
-	 public void addtoCORE(Connection connection, String nname, int ecuId) throws SQLException {
+        	catch(JdbcSQLException e){return "ERROR";}
+        }
+        return "OK";
+}
+	 public String addtoCORE(Connection connection, String nname, int ecuId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
+	        	try{
 	        	statement.execute("insert into core(namecore, ecu_id) values('"+nname+"', "+ecuId+") ");
 	        }
-	    }
-	 public void addtoECU(Connection connection, String nname, int sysId) throws SQLException {
+        	catch(JdbcSQLException e){return "ERROR";}
+        }
+        return "OK";
+        
+}
+	 public String addtoECU(Connection connection, String nname, int sysId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
+	        	try{
 	        	statement.execute("insert into ecu (nameecu, sys_id) values('"+nname+"',"+sysId+")");
 	        }
-	    }
-	 public void addtoFRAME(Connection connection, String nname, int lengthf, int taskId) throws SQLException {
+        	catch(JdbcSQLException e){return "ERROR";}
+        }
+        return "OK";
+ }
+
+	 public String addtoFRAME(Connection connection, String nname, int lengthf, int taskId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
+	        try{	
 	        	statement.execute("insert into frame (nameframe, lengthf, task_Id) values('"+nname+"',"+lengthf+","+taskId+")");
 	        }
-	    }
-	 public void addtoSYSTEM(Connection connection, String nname, int uId) throws SQLException {//user_id
+        	catch(JdbcSQLException e){return "ERROR";}
+        }
+        return "OK";
+	        }
+	 public String addtoSYSTEM(Connection connection, String nname, int uId) throws SQLException {//user_id
 	        try (Statement statement = connection.createStatement()) {
-	        	
+	        	try{
 	        	statement.execute("insert into system (namesys, user_id) values('"+nname+"',"+uId+")");
 	        }
-	    }
-	 public void addtoTASK(Connection connection, String nname, String type, int offsett, int lengtht, int period, int coreId) throws SQLException {
+        	catch(JdbcSQLException e){return "ERROR";}
+        }
+        return "OK";
+	        }
+
+	 public String addtoTASK(Connection connection, String nname, String type, int offsett, int lengtht, int period, int coreId) throws SQLException {
 	        try (Statement statement = connection.createStatement()) {
-	        	
+	        	try{
 	        	statement.execute("insert into task (nametask, type, offsett, lengtht, period, core_Id"
 	        			+ ") values('"+nname+"', '"+type+"',"+offsett+", "+lengtht+", "+period+","+coreId+")");
 	        }
-	    }
+        	catch(JdbcSQLException e){return "ERROR";}
+        }
+        return "OK";
+	        }
 	 //-----------------------------------------------------------------------------------------
 	 //---------------------Delete From Table--------------------------------------------------
 	 public void deleteFromTable(Connection connection,String nameT, int itemId) throws SQLException {
@@ -348,6 +380,32 @@ public class connectH2 {
 	            while (rs.next()) {
 	            	//System.out.println(rs.getInt("task_id"));
       result=result+"-"+ rs.getInt("lengtht");
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
+	 public String getTASKTYPE(Connection connection,  int coreId) throws SQLException {
+	 		String result = "0";
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select type from task where core_id = "+coreId+";");
+	            while (rs.next()) {
+	            	//System.out.println(rs.getInt("task_id"));
+   result=result+"-"+ rs.getString("type");
+	            }
+	            System.out.println("----------------");
+	        }
+	        return result;
+}
+	 public String getTASKPERIOD(Connection connection,  int coreId) throws SQLException {
+	 		String result = "0";
+	ResultSet rs;
+	        try (Statement statement = connection.createStatement()) {
+	            rs = statement.executeQuery("select period from task where core_id = "+coreId+";");
+	            while (rs.next()) {
+	            	//System.out.println(rs.getInt("task_id"));
+result=result+"-"+ rs.getInt("period");
 	            }
 	            System.out.println("----------------");
 	        }

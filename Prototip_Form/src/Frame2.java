@@ -316,11 +316,11 @@ class Edit_cpu extends JFrame{
 			    		model1.addRow(dataM[i].split(":"));
 			    	} 
 			    }
-			    else{
+			   /* else{
 			    	//books1.clearSelection();
 		 	    	 JLabel countLabel = new JLabel("Нет элементов для " + core_name); //(String) model.getValueAt(books.getSelectedRow(), 1)); 
 		             JOptionPane.showMessageDialog(null, countLabel);
-			    }
+			    }*/
 			}	  
 		}
 	}
@@ -359,10 +359,10 @@ class Edit_cpu extends JFrame{
 	 	        		model2.addRow(dataM[i].split(":"));
 	 	        	} 
 	 	        }
-	 	        else{
+	 	       /* else{
 	 	        	JLabel countLabel = new JLabel("Нет элементов для " + task_name);//(String) model1.getValueAt(books1.getSelectedRow(), 1)); 
 	 	        	JOptionPane.showMessageDialog(null, countLabel);
-	 	        }
+	 	        }*/
 			}
 		}
 	}
@@ -485,7 +485,7 @@ class Edit_cpu extends JFrame{
 	        WebTarget target = client.target(getBaseURI());
 	        String Response = "";
 	        try{
-	        	Response = target.path("rest").path("getinfo").path("task").path("1").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        	Response = target.path("rest").path("getinfo").path("task").path("1").path(core_id).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
 	        }
 	        catch(ProcessingException e){
 	        	JLabel countLabel = new JLabel("Нет подключения к серверу!"); 
@@ -494,11 +494,15 @@ class Edit_cpu extends JFrame{
 	        System.out.println(Response);
 	        String taskName [] = Response.split("-");
 			
-	        Response = target.path("rest").path("getinfo").path("task").path("2").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        Response = target.path("rest").path("getinfo").path("task").path("2").path(core_id).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
 	        String nn [] =Response.split("-");
-	        Response = target.path("rest").path("getinfo").path("task").path("3").path(core_id).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        Response = target.path("rest").path("getinfo").path("task").path("3").path(core_id).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
 	        String nk [] = Response.split("-");
-		    Task[] t1;
+	        Response = target.path("rest").path("getinfo").path("task").path("4").path(core_id).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        String type [] = Response.split("-");
+	        Response = target.path("rest").path("getinfo").path("task").path("5").path(core_id).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+	        String per [] = Response.split("-");
+	        Task[] t1;
 		    TaskSeries [] t2;
 			 /////////////////////////////////////////////////////////////////////////
 				 TaskSeriesCollection s1 = new TaskSeriesCollection();
@@ -511,10 +515,24 @@ class Edit_cpu extends JFrame{
 					 System.out.println(k + "  "+taskName[k]+"\n");
 					 	//t2[k].setDescription(taskName[k]);
 					    t2[k-1] = new TaskSeries(taskName[k]);
-						t1[k-1] = new Task(taskName[k], date(1), date(24));
+						t1[k-1] = new Task(taskName[k], date(1), date(23));
 						System.out.println(nn[k] +"  "+ nk[k]+"  "+Integer.parseInt(nn[k])+Integer.parseInt(nk[k]));
-						t1[k-1].addSubtask(new Task("Task", date(Integer.parseInt(nn[k])), date(Integer.parseInt(nn[k])+Integer.parseInt(nk[k]))));
-						t2[k-1].add(t1[k-1]);
+						int start = Integer.parseInt(nn[k]);
+						int end = Integer.parseInt(nn[k]) + Integer.parseInt(nk[k]);
+						if(type[k].equals("Period")){
+							
+							for (int i=1; i<10; i++)
+							 {
+								t1[k-1].addSubtask(new Task("Task", date(start), date(end)));
+								t2[k-1].add(t1[k-1]);
+								start = end + Integer.parseInt(per[k]);
+								end = start + Integer.parseInt(nk[k]);
+							 }
+						}
+						else{
+							t1[k-1].addSubtask(new Task("Task", date(start), date(end)));
+							t2[k-1].add(t1[k-1]);
+						}
 	
 				s1.add(t2[k-1]);
 				 }

@@ -555,7 +555,7 @@ public class Frame1 {
 					     Client client = ClientBuilder.newClient(config);
 					     System.out.println(sysName);
 					     WebTarget target = client.target(getBaseURI());
-					     String Response = target.path("rest").path("getinfo").path("system").path("0").path("0").path(sysName).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+					     String Response = target.path("rest").path("getinfo").path("system").path("0").path(sysName).path("0").request().accept(MediaType.TEXT_PLAIN).get(String.class);
 					     System.out.println(Response);
 					     String result = target.path("rest").path("delitem").path("system").path(Response).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 					     System.out.println(result);
@@ -566,7 +566,7 @@ public class Frame1 {
 					    	 Frame1.model1.removeRow(0);
 					     }		
 					 	
-				        Response = target.path("rest").path("getinfo").path("system").path("1").path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+				        Response = target.path("rest").path("getinfo").path("system").path("1").path("1").path(Login.userIndex).request().accept(MediaType.TEXT_PLAIN).get(String.class);
 				        System.out.println(Response);
 				        String dataS [] = Response.split("-");
 			         

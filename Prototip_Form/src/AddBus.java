@@ -113,7 +113,7 @@ public AddBus(){
 						JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
 						JOptionPane.showMessageDialog(null, countLabel);
 					}
-					if(Response.equals("Ошибка!")){
+					if(Response.equals("ERROR")){
 						f=0;
 						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
 			            JOptionPane.showMessageDialog(null, countLabel);

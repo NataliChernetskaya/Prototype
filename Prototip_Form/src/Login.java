@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -60,7 +61,7 @@ public class Login extends JFrame{
 	 
 	 JTextField  num, num1;
 	 JComboBox comboBox, comboBox1, comboBox2;
-	 JButton button1, button2, save, add, delete, prosm,prosm1 ;
+	 JButton button1, button2;
 	 JToolBar toolBar;
 	 JFrame frame;
 	 JButton ok,cancel;
@@ -91,10 +92,13 @@ public class Login extends JFrame{
      	box2.add(num1);
      	
      	Box box3 = Box.createHorizontalBox();
-		button1 = new JButton("Submit");
+		button1 = new JButton("Вход");
      	box3.add(button1);
+     	button2 = new JButton("Регистрация");
+     	box3.add(button2);
      	DDDD AD = new DDDD();
         button1.addActionListener(AD);
+        button2.addActionListener(AD);
      	 
      	b.setPreferredSize(b1.getPreferredSize());
      	
@@ -135,9 +139,35 @@ public class Login extends JFrame{
 		                	Frame window = new Frame();
 		                	frame.setVisible(false);
 		                } else {
-		                    JOptionPane.showMessageDialog(frame, "Не верно!");
+		                    JOptionPane.showMessageDialog(frame, "Не верный логин или пароль!");
 		                }
 		            }
+				if(ev.getSource() == button2){
+					int f=0;
+					ClientConfig config = new ClientConfig();
+				     Client client = ClientBuilder.newClient(config);
+				      	
+				     WebTarget target = client.target(getBaseURI());
+				     String Response = "";
+				     try{
+							Response = target.path("rest").path("add").path("users").path(n).path(n1).request().accept(MediaType.TEXT_PLAIN).get(String.class);
+							f=1;
+						}
+						catch(NotFoundException e){
+							JLabel countLabel = new JLabel("Проверьте введенные данные!"); 
+							JOptionPane.showMessageDialog(null, countLabel);
+						}
+						if(Response.equals("ERROR")){
+							f=0;
+							JLabel countLabel = new JLabel("Такое имя уже занято!"); 
+				            JOptionPane.showMessageDialog(null, countLabel);
+						}
+						else{
+							userIndex = target.path("rest").path("getinfo").path("login").path("1").path(n).path("1").request().accept(MediaType.TEXT_PLAIN).get(String.class);
+							Frame window = new Frame();
+		                	frame.setVisible(false);
+						}
+				}
 				 
 		}
 	 }	

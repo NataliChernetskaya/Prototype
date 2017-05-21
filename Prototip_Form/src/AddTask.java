@@ -150,7 +150,7 @@ public class AddTask {
 						JOptionPane.showMessageDialog(null, countLabel);
 					}
 					System.out.println(Response);
-					if(Response.equals("Ошибка!")){
+					if(Response.equals("ERROR")){
 						f=0;
 						JLabel countLabel = new JLabel("Такое имя уже занято!"); 
 			            JOptionPane.showMessageDialog(null, countLabel);
